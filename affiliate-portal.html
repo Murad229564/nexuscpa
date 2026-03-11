@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexusCPA — Publisher Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#080a10;--surf:#0d1018;--surf2:#121520;--surf3:#181d28;--border:#1a2035;--text:#e4e7f1;--muted:#5a6385;--input:#121520;--shadow:0 2px 16px rgba(0,0,0,.5)}
+[data-theme="light"]{--bg:#f2f4fa;--surf:#ffffff;--surf2:#eef0f8;--surf3:#e4e7f3;--border:#d8dced;--text:#0f1221;--muted:#6b749a;--input:#f2f4fa;--shadow:0 2px 16px rgba(0,0,0,.07)}
+:root{--accent:#4a6cf7;--a2:#7c3aed;--green:#10b981;--gbg:rgba(16,185,129,.1);--red:#ef4444;--rbg:rgba(239,68,68,.1);--yellow:#f59e0b;--ybg:rgba(245,158,11,.1);--orange:#f97316;--sw:240px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s}
+
+/* AUTH */
+.aw{display:flex;min-height:100vh}
+.al{flex:1;background:linear-gradient(145deg,#06080f,#0d1829);display:flex;flex-direction:column;justify-content:space-between;padding:48px;position:relative;overflow:hidden}
+[data-theme="light"] .al{background:linear-gradient(145deg,#1a2248,#2e3d7a)}
+.al::before{content:'';position:absolute;width:520px;height:520px;border-radius:50%;background:radial-gradient(circle,rgba(74,108,247,.15),transparent 65%);top:-120px;left:-100px;pointer-events:none}
+.al::after{content:'';position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(124,58,237,.12),transparent 65%);bottom:-60px;right:-40px;pointer-events:none}
+.agrid{position:absolute;inset:0;background-image:linear-gradient(rgba(74,108,247,.06) 1px,transparent 1px),linear-gradient(90deg,rgba(74,108,247,.06) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000,transparent)}
+.alogo{font-size:20px;font-weight:800;color:#fff;position:relative;z-index:1;letter-spacing:-.5px}
+.alogo span{color:var(--accent)}
+.atag{position:relative;z-index:1}
+.atag h2{font-size:clamp(26px,3vw,40px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-1px;margin-bottom:12px}
+.atag p{color:rgba(255,255,255,.5);font-size:13px;line-height:1.7}
+.astats{display:flex;gap:32px;position:relative;z-index:1}
+.astat .n{font-size:24px;font-weight:800;color:var(--accent);letter-spacing:-1px}
+.astat .l{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.ar{width:460px;background:var(--surf);display:flex;align-items:center;justify-content:center;padding:48px 44px}
+.afb{width:100%}
+.afb h3{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.afb .sub{font-size:12px;color:var(--muted);margin-bottom:24px}
+
+/* PENDING */
+.pend{text-align:center;padding:28px 12px}
+.pend .icon{font-size:54px;margin-bottom:14px}
+.pend h3{font-size:19px;font-weight:700;margin-bottom:8px}
+.pend p{font-size:12px;color:var(--muted);line-height:1.7}
+.pend-steps{margin-top:20px;padding:14px;background:var(--surf2);border-radius:10px;border:1px solid var(--border);font-size:12px;text-align:left;color:var(--muted);line-height:2}
+
+/* FORM */
+.fr{margin-bottom:13px}
+.fr label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px}
+.fr input,.fr select,.fr textarea{width:100%;padding:10px 13px;background:var(--input);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+.fr input:focus,.fr select:focus{border-color:var(--accent)}
+.fr select{cursor:pointer}
+.fc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.abtn{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;margin-top:4px}
+.abtn:hover{background:#3959e8;transform:translateY(-1px)}
+.asw{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
+.asw a{color:var(--accent);cursor:pointer;font-weight:600}
+
+/* ANN BAR */
+.ann{background:linear-gradient(90deg,var(--accent),var(--a2));padding:8px 20px;text-align:center;font-size:12px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;position:relative}
+.ann-x{position:absolute;right:16px;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:16px}
+
+/* SIDEBAR */
+.layout{display:flex}
+.sb{width:var(--sw);min-height:100vh;background:var(--surf);border-right:1px solid var(--border);position:fixed;left:0;top:0;z-index:100;display:flex;flex-direction:column;transition:background .25s}
+.st{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.slogo{font-size:17px;font-weight:800;letter-spacing:-.5px}
+.slogo span{color:var(--accent)}
+.stag{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:1px}
+.tbtn{background:var(--surf2);border:1px solid var(--border);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:14px;color:var(--text);transition:.2s}
+.tbtn:hover{border-color:var(--accent)}
+nav{padding:10px 8px;flex:1;overflow-y:auto}
+.ns{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:10px 8px 4px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;margin-bottom:1px}
+.ni:hover{background:var(--surf2);color:var(--text)}
+.ni.active{background:rgba(74,108,247,.12);color:var(--accent);font-weight:600}
+.ni .ico{font-size:14px;width:17px;text-align:center}
+.ni .bdg{margin-left:auto;background:var(--accent);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
+.ni .bdgr{margin-left:auto;background:var(--red);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
+.su{padding:10px 12px;border-top:1px solid var(--border)}
+.suc{display:flex;align-items:center;gap:9px;padding:9px;background:var(--surf2);border-radius:9px}
+.sav{width:30px;height:30px;border-radius:7px;background:var(--accent);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+.snm{font-size:12px;font-weight:600}
+.sid{font-size:10px;color:var(--muted)}
+.son{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--green)}
+
+/* CONTENT */
+.ct{margin-left:var(--sw);flex:1}
+.tb{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;border-bottom:1px solid var(--border);background:var(--surf);position:sticky;top:0;z-index:50}
+.tbl h2{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.tbl p{font-size:11px;color:var(--muted);margin-top:2px}
+.tbr{display:flex;gap:9px;align-items:center}
+.ibtn{background:var(--surf2);border:1px solid var(--border);border-radius:7px;padding:7px 11px;cursor:pointer;font-size:14px;color:var(--text);position:relative;transition:.2s}
+.ibtn:hover{border-color:var(--accent)}
+.ndot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--red);border:2px solid var(--surf)}
+
+.pb{padding:22px 26px}
+.page{display:none}
+.page.active{display:block}
+
+/* STATS */
+.sg4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.sg2{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;margin-bottom:18px}
+.sc{background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:16px;box-shadow:var(--shadow)}
+.scl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.scv{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:3px}
+.scc{font-size:11px}
+.up{color:var(--green)}.dn{color:var(--red)}.neu{color:var(--yellow)}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}
+.ct2{font-size:13px;font-weight:700}
+
+/* LAYOUT GRIDS */
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3l{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+
+/* BTNS */
+.btn{padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'Sora',sans-serif}
+.bp{background:var(--accent);color:#fff}.bp:hover{background:#3959e8}
+.bo{background:transparent;border:1px solid var(--border);color:var(--text)}.bo:hover{border-color:var(--accent);color:var(--accent)}
+.bg{background:var(--gbg);color:var(--green);border:1px solid rgba(16,185,129,.2)}
+.br2{background:var(--rbg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.bsm{padding:5px 11px;font-size:10px}
+
+/* TABLE */
+.tbl2{width:100%;border-collapse:collapse}
+.tbl2 th{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl2 td{padding:10px 11px;font-size:12px;border-bottom:1px solid var(--border)}
+.tbl2 tr:last-child td{border-bottom:none}
+.tbl2 tbody tr:hover td{background:var(--surf2)}
+
+/* PILL */
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.pg{background:var(--gbg);color:var(--green)}.py{background:var(--ybg);color:var(--yellow)}.pr{background:var(--rbg);color:var(--red)}.pb2{background:rgba(74,108,247,.12);color:var(--accent)}.po{background:rgba(249,115,22,.12);color:var(--orange)}
+
+/* OFFER CARDS */
+.ogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.oc{background:var(--surf);border:1.5px solid var(--border);border-radius:11px;padding:14px;cursor:pointer;transition:all .2s;position:relative;overflow:hidden}
+.oc:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(74,108,247,.12)}
+.oc.locked{opacity:.9}
+.lock-badge{position:absolute;top:10px;right:10px;background:var(--ybg);color:var(--yellow);font-size:9px;font-weight:700;padding:3px 7px;border-radius:10px;border:1px solid rgba(245,158,11,.2)}
+.open-badge{position:absolute;top:10px;right:10px;background:var(--gbg);color:var(--green);font-size:9px;font-weight:700;padding:3px 7px;border-radius:10px;border:1px solid rgba(16,185,129,.2)}
+.ocat{font-size:9px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px;margin-top:4px}
+.onm{font-size:13px;font-weight:700;margin-bottom:3px}
+.opay{font-size:20px;font-weight:800;color:var(--green);letter-spacing:-.5px}
+.ometa{display:flex;gap:9px;margin:7px 0 11px;font-size:11px;color:var(--muted);flex-wrap:wrap}
+.oact{display:flex;justify-content:space-between;align-items:center}
+
+/* LINK BOX */
+.lbox{background:var(--surf2);border:1px solid var(--border);border-radius:7px;padding:9px 12px;display:flex;align-items:center;gap:7px}
+.ltext{font-family:'JetBrains Mono',monospace;font-size:10px;color:var(--accent);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.cbtn{background:var(--surf3);border:1px solid var(--border);color:var(--text);border-radius:5px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s}
+.cbtn:hover{background:var(--accent);color:#fff;border-color:var(--accent)}
+
+/* CRYPTO */
+.cgrid{display:grid;grid-template-columns:repeat(3,1fr);gap:9px;margin-bottom:16px}
+.cc{border:1.5px solid var(--border);border-radius:9px;padding:12px;text-align:center;cursor:pointer;transition:.2s}
+.cc:hover,.cc.sel{border-color:var(--accent);background:rgba(74,108,247,.06)}
+.cicon{font-size:24px;margin-bottom:5px}
+.cnm{font-size:12px;font-weight:700}
+.csym{font-size:10px;color:var(--muted);margin-top:1px}
+.winput{width:100%;padding:11px 13px;background:var(--input);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'JetBrains Mono',monospace;font-size:11px;outline:none;transition:border-color .2s;margin-bottom:13px}
+.winput:focus{border-color:var(--accent)}
+.pconf{background:rgba(16,185,129,.06);border:1px solid rgba(16,185,129,.18);border-radius:9px;padding:14px;margin-bottom:13px}
+.pconf .row{display:flex;justify-content:space-between;font-size:11px;margin-bottom:7px}
+.pconf .row:last-child{margin-bottom:0;font-weight:700;font-size:13px;color:var(--green)}
+.pconf .row span:first-child{color:var(--muted)}
+
+/* CHAT */
+.cfab{position:fixed;bottom:22px;right:22px;z-index:200}
+.cbub{width:50px;height:50px;border-radius:50%;background:var(--accent);border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 20px rgba(74,108,247,.45);display:flex;align-items:center;justify-content:center;transition:.2s;position:relative}
+.cbub:hover{transform:scale(1.1)}
+.cunread{position:absolute;top:-2px;right:-2px;width:17px;height:17px;border-radius:50%;background:var(--red);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surf)}
+.cpanel{position:fixed;bottom:82px;right:22px;width:300px;background:var(--surf);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 36px rgba(0,0,0,.3);z-index:200;display:none;flex-direction:column;overflow:hidden;max-height:400px}
+.cpanel.open{display:flex}
+.chead{padding:12px 14px;background:var(--accent);display:flex;align-items:center;justify-content:space-between}
+.chi{display:flex;align-items:center;gap:9px}
+.chav{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.chnm{font-size:12px;font-weight:700;color:#fff}
+.chst{font-size:10px;color:rgba(255,255,255,.7)}
+.cclose{background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:17px}
+.cmsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.msg .bub{background:var(--surf2);border-radius:11px 11px 11px 0;padding:8px 11px;font-size:11px;line-height:1.5}
+.msg-out{align-self:flex-end}
+.msg-out .bub{background:var(--accent);color:#fff;border-radius:11px 11px 0 11px;padding:8px 11px;font-size:11px;line-height:1.5}
+.mtime{font-size:9px;color:var(--muted);margin-top:2px;padding:0 3px}
+.msg-out .mtime{text-align:right}
+.cinrow{padding:9px 11px;border-top:1px solid var(--border);display:flex;gap:7px}
+.cinp{flex:1;padding:8px 11px;background:var(--input);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none}
+.csend{background:var(--accent);border:none;border-radius:7px;padding:8px 12px;cursor:pointer;color:#fff;font-size:13px;transition:.15s}
+.csend:hover{background:#3959e8}
+
+/* REFERRAL */
+.refhero{background:linear-gradient(135deg,rgba(74,108,247,.1),rgba(124,58,237,.1));border:1px solid rgba(74,108,247,.2);border-radius:13px;padding:24px;text-align:center;margin-bottom:18px}
+.refcode{font-family:'JetBrains Mono',monospace;font-size:28px;font-weight:700;color:var(--accent);letter-spacing:4px;margin:8px 0}
+
+/* TOAST */
+.toast{position:fixed;bottom:82px;right:22px;background:var(--surf);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:9px;font-size:12px;font-weight:600;transform:translateY(70px);opacity:0;transition:all .3s;z-index:999;box-shadow:0 4px 18px rgba(0,0,0,.2)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.mbox{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:26px;width:460px;max-width:92vw;max-height:88vh;overflow-y:auto;position:relative}
+.mclose{position:absolute;top:13px;right:13px;background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer}
+
+/* SUB ITEM */
+.subi{display:flex;align-items:center;gap:11px;padding:11px 13px;background:var(--surf2);border-radius:9px;border:1px solid var(--border);margin-bottom:9px}
+.subav{width:34px;height:34px;border-radius:7px;display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+
+@media(max-width:900px){.sg4{grid-template-columns:1fr 1fr}.ogrid{grid-template-columns:1fr 1fr}.g2,.g3l{grid-template-columns:1fr}.sb{display:none}.ct{margin-left:0}}
+</style>
+</head>
+<body>
+
+<!-- AUTH: REGISTER -->
+<div id="auth-register" class="aw">
+  <div class="al">
+    <div class="agrid"></div>
+    <div class="alogo">Nexus<span>CPA</span> <span style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400;vertical-align:middle;margin-left:6px;">📍 Delaware, USA</span></div>
+    <div class="atag"><h2>Your traffic.<br>Your earnings.</h2><p>Premium incentive & CPA offers. BTC, ETH, USDT payouts every Monday. Fraud-free tracking.</p></div>
+    <div class="astats">
+      <div class="astat"><div class="n">$3.2M+</div><div class="l">Paid out</div></div>
+      <div class="astat"><div class="n">900+</div><div class="l">Live offers</div></div>
+      <div class="astat"><div class="n">14K+</div><div class="l">Publishers</div></div>
+    </div>
+  </div>
+  <div class="ar"><div class="afb">
+    <h3>Create Publisher Account</h3>
+    <p class="sub">Free to join · Reviewed within 24 hours</p>
+    <div class="fc">
+      <div class="fr"><label>First Name</label><input id="r-fn" placeholder="John"></div>
+      <div class="fr"><label>Last Name</label><input id="r-ln" placeholder="Smith"></div>
+    </div>
+    <div class="fr"><label>Email Address</label><input id="r-em" type="email" placeholder="you@email.com"></div>
+    <div class="fr"><label>Password</label><input id="r-pw" type="password" placeholder="Min. 8 characters"></div>
+    <div class="fr"><label>Skype / Telegram</label><input placeholder="@yourusername"></div>
+    <div class="fr"><label>Primary Traffic Source</label>
+      <select id="r-tr">
+        <option value="">— Select your main traffic source —</option>
+        <option>Social Media (Facebook, TikTok, Instagram)</option>
+        <option>YouTube / Video</option>
+        <option>Blog / SEO</option>
+        <option>Email Marketing</option>
+        <option>Paid Ads (Google, Meta)</option>
+        <option>Native Advertising</option>
+        <option>Telegram / WhatsApp Groups</option>
+        <option>Other</option>
+      </select>
+    </div>
+    <div class="fr"><label>Referral Code (optional)</label><input id="r-ref" placeholder="Enter code if you have one"></div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px;">By registering you agree to our <a href="#" style="color:var(--accent)">Terms</a> & <a href="#" style="color:var(--accent)">Privacy Policy</a>.</div>
+    <button class="abtn" onclick="doRegister()">Submit Application →</button>
+    <div class="asw">Already have an account? <a onclick="toAuth('login')">Sign In</a></div>
+  </div></div>
+</div>
+
+<!-- AUTH: PENDING -->
+<div id="auth-pending" style="display:none" class="aw">
+  <div class="al"><div class="agrid"></div>
+    <div class="alogo">Nexus<span>CPA</span></div>
+    <div class="atag"><h2>Almost there!</h2><p>Your application is under review by our team.</p></div>
+    <div class="astats"><div class="astat"><div class="n">24h</div><div class="l">Avg review time</div></div></div>
+  </div>
+  <div class="ar"><div class="afb"><div class="pend">
+    <div class="icon">⏳</div>
+    <h3>Application Submitted!</h3>
+    <p>Your account is <strong>pending review</strong>. Our affiliate team will verify your application and email you once approved.<br><br>Contact: <strong>support@nexuscpa.com</strong></p>
+    <div class="pend-steps">
+      <strong style="color:var(--text)">What happens next?</strong><br>
+      1. Our team reviews your traffic source<br>
+      2. Account verification (24h)<br>
+      3. Approval email sent to you<br>
+      4. Login → pick offers → earn!
+    </div>
+    <button class="abtn" style="margin-top:18px" onclick="toAuth('login')">Go to Login</button>
+  </div></div></div>
+</div>
+
+<!-- AUTH: LOGIN -->
+<div id="auth-login" style="display:none" class="aw">
+  <div class="al"><div class="agrid"></div>
+    <div class="alogo">Nexus<span>CPA</span></div>
+    <div class="atag"><h2>Welcome back, publisher.</h2><p>Log in to manage campaigns and track your earnings.</p></div>
+    <div class="astats">
+      <div class="astat"><div class="n">$842</div><div class="l">Avg monthly earnings</div></div>
+      <div class="astat"><div class="n">Weekly</div><div class="l">Crypto payouts</div></div>
+    </div>
+  </div>
+  <div class="ar"><div class="afb">
+    <h3>Sign In</h3>
+    <p class="sub">Access your publisher dashboard</p>
+    <div class="fr"><label>Email</label><input type="email" value="demo@publisher.com"></div>
+    <div class="fr"><label>Password</label><input type="password" value="demo1234"></div>
+    <a href="#" style="display:block;text-align:right;font-size:11px;color:var(--accent);margin-bottom:12px">Forgot password?</a>
+    <button class="abtn" onclick="doLogin()">Sign In →</button>
+    <div class="asw">New publisher? <a onclick="toAuth('register')">Create account</a></div>
+  </div></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main" style="display:none">
+  <!-- Announcement Bar -->
+  <div class="ann" id="annbar">
+    <span>🔥 <strong>New:</strong> $50 Amazon Gift Card payout raised to <strong>$2.80</strong> · Limited spots available!</span>
+    <button class="ann-x" onclick="this.parentElement.style.display='none'">✕</button>
+  </div>
+
+  <div class="layout">
+    <!-- Sidebar -->
+    <aside class="sb">
+      <div class="st">
+        <div><div class="slogo">Nexus<span>CPA</span></div><div class="stag">Publisher · USA 🇺🇸</div></div>
+        <button class="tbtn" id="ticon" onclick="toggleTheme()">🌙</button>
+      </div>
+      <nav>
+        <div class="ns">Overview</div>
+        <div class="ni active" onclick="nav('dashboard',this)"><span class="ico">📊</span> Dashboard</div>
+        <div class="ni" onclick="nav('offers',this)"><span class="ico">🎯</span> Browse Offers</div>
+        <div class="ns">My Work</div>
+        <div class="ni" onclick="nav('links',this)"><span class="ico">🔗</span> Tracking Links</div>
+        <div class="ni" onclick="nav('clicks',this)"><span class="ico">👆</span> Clicks & Conversions</div>
+        <div class="ni" onclick="nav('reports',this)"><span class="ico">📈</span> Reports</div>
+        <div class="ni" onclick="nav('requests',this)"><span class="ico">📋</span> Offer Requests <span class="bdg" id="reqbdg">2</span></div>
+        <div class="ns">Earnings</div>
+        <div class="ni" onclick="nav('earnings',this)"><span class="ico">💰</span> Earnings</div>
+        <div class="ni" onclick="nav('payouts',this)"><span class="ico">₿</span> Crypto Payouts</div>
+        <div class="ns">Grow</div>
+        <div class="ni" onclick="nav('referral',this)"><span class="ico">🎁</span> Referral Program</div>
+        <div class="ni" onclick="nav('subaffiliates',this)"><span class="ico">👥</span> Sub-Publishers <span class="bdg">4</span></div>
+        <div class="ns">Account</div>
+        <div class="ni" onclick="nav('settings',this)"><span class="ico">⚙️</span> Settings</div>
+      </nav>
+      <div class="su"><div class="suc">
+        <div class="sav">J</div>
+        <div><div class="snm">John Smith</div><div class="sid">AFF-00123</div></div>
+        <div class="son"></div>
+      </div></div>
+    </aside>
+
+    <div class="ct">
+      <!-- Topbar -->
+      <div class="tb">
+        <div class="tbl"><h2 id="ptitle">Dashboard</h2><p id="psub">Good morning, John 👋</p></div>
+        <div class="tbr">
+          <button class="ibtn" onclick="nav('offers',null)" title="Browse Offers">🎯</button>
+          <button class="ibtn" onclick="showToast('No new notifications')" title="Notifications">🔔<span class="ndot"></span></button>
+          <button class="btn bp bsm" onclick="nav('payouts',null)">Withdraw ₿</button>
+        </div>
+      </div>
+
+      <div class="pb">
+
+        <!-- ====== DASHBOARD ====== -->
+        <div id="p-dashboard" class="page active">
+          <div class="sg4">
+            <div class="sc"><div class="scl">Today Clicks</div><div class="scv">284</div><div class="scc up">↑ 18% vs yesterday</div></div>
+            <div class="sc"><div class="scl">Today Conv.</div><div class="scv">21</div><div class="scc up">↑ 5 above avg</div></div>
+            <div class="sc"><div class="scl">Today Earnings</div><div class="scv" style="color:var(--green)">$52.50</div><div class="scc up">↑ 12%</div></div>
+            <div class="sc"><div class="scl">Pending Balance</div><div class="scv">$318.40</div><div class="scc neu">Payout Monday</div></div>
+          </div>
+          <div class="g3l">
+            <div class="card">
+              <div class="ch"><div class="ct2">Recent Conversions</div><span class="pill pg">● Live</span></div>
+              <table class="tbl2">
+                <thead><tr><th>Offer</th><th>Payout</th><th>Status</th><th>Time</th></tr></thead>
+                <tbody>
+                  <tr><td>$50 Amazon Gift Card</td><td style="color:var(--green);font-weight:700">$2.50</td><td><span class="pill pg">Approved</span></td><td style="color:var(--muted)">4m ago</td></tr>
+                  <tr><td>Email Submit CPL</td><td style="color:var(--green);font-weight:700">$1.20</td><td><span class="pill py">Pending</span></td><td style="color:var(--muted)">12m ago</td></tr>
+                  <tr><td>$100 Visa Gift Card</td><td style="color:var(--green);font-weight:700">$4.00</td><td><span class="pill pg">Approved</span></td><td style="color:var(--muted)">31m ago</td></tr>
+                  <tr><td>Survey CPL</td><td style="color:var(--green);font-weight:700">$1.80</td><td><span class="pill pg">Approved</span></td><td style="color:var(--muted)">1h ago</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="card" style="margin-bottom:0">
+                <div class="ct2" style="margin-bottom:10px">Monthly Progress</div>
+                <div style="font-size:24px;font-weight:800;color:var(--green)">$318.40</div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:7px">of $500 goal · 63%</div>
+                <div style="height:5px;background:var(--surf2);border-radius:3px;overflow:hidden"><div style="height:100%;width:63%;background:linear-gradient(90deg,var(--accent),var(--a2));border-radius:3px"></div></div>
+              </div>
+              <div class="card" style="margin-bottom:0">
+                <div class="ct2" style="margin-bottom:10px">Sub-Publisher Bonus</div>
+                <div style="font-size:22px;font-weight:800;color:var(--orange)">$42.80</div>
+                <div style="font-size:11px;color:var(--muted)">From 4 sub-publishers (5%)</div>
+                <a onclick="nav('subaffiliates',null)" style="font-size:11px;color:var(--accent);cursor:pointer;display:block;margin-top:7px;font-weight:600">View details →</a>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct2">Top Links</div><button class="btn bo bsm" onclick="nav('links',null)">All Links</button></div>
+            <table class="tbl2">
+              <thead><tr><th>Offer</th><th>Campaign</th><th>Clicks</th><th>Conv.</th><th>CR</th><th>Earnings</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>$50 Amazon Gift Card</td><td><code style="font-size:10px;background:var(--surf2);padding:2px 5px;border-radius:4px">fb_camp1</code></td><td>1,240</td><td>89</td><td style="color:var(--green);font-weight:600">7.2%</td><td style="color:var(--green);font-weight:700">$222.50</td><td><button class="btn bo bsm" onclick="copyText(this,'https://track.nexuscpa.com/c?o=1&a=123&s1=fb_camp1')">Copy</button></td></tr>
+                <tr><td>Email Submit CPL</td><td><code style="font-size:10px;background:var(--surf2);padding:2px 5px;border-radius:4px">tiktok_v2</code></td><td>820</td><td>64</td><td style="color:var(--green);font-weight:600">7.8%</td><td style="color:var(--green);font-weight:700">$76.80</td><td><button class="btn bo bsm" onclick="copyText(this,'https://track.nexuscpa.com/c?o=3&a=123&s1=tiktok_v2')">Copy</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== OFFERS ====== -->
+        <div id="p-offers" class="page">
+          <div style="display:flex;gap:9px;margin-bottom:16px;flex-wrap:wrap;align-items:center">
+            <select class="btn bo" style="padding:7px 12px;font-size:11px" onchange="filterOffers(this.value)">
+              <option value="">All Categories</option>
+              <option>Gift Cards</option><option>Survey / CPL</option><option>Finance</option><option>App Install</option>
+            </select>
+            <select class="btn bo" style="padding:7px 12px;font-size:11px">
+              <option>All GEOs</option><option>US Only</option><option>US + CA + UK</option><option>Global</option>
+            </select>
+            <div style="margin-left:auto;font-size:11px;color:var(--muted);display:flex;gap:12px;align-items:center">
+              <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--green);margin-right:4px"></span>Open</span>
+              <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--yellow);margin-right:4px"></span>Request Required</span>
+            </div>
+          </div>
+          <div class="ogrid" id="offer-grid"></div>
+        </div>
+
+        <!-- ====== TRACKING LINKS ====== -->
+        <div id="p-links" class="page">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn bp" onclick="nav('offers',null)">+ Get New Link</button></div>
+          <div class="card">
+            <table class="tbl2">
+              <thead><tr><th>Offer</th><th>Campaign</th><th>Tracking Link</th><th>Clicks</th><th>Conv.</th><th>Earnings</th></tr></thead>
+              <tbody id="links-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== CLICKS ====== -->
+        <div id="p-clicks" class="page">
+          <div class="sg4">
+            <div class="sc"><div class="scl">Total Clicks</div><div class="scv">8,420</div></div>
+            <div class="sc"><div class="scl">Conversions</div><div class="scv">621</div><div class="scc up">CR 7.4%</div></div>
+            <div class="sc"><div class="scl">Rejected</div><div class="scv">18</div><div class="scc dn">2.9%</div></div>
+            <div class="sc"><div class="scl">EPC</div><div class="scv">$0.19</div></div>
+          </div>
+          <div class="card">
+            <table class="tbl2">
+              <thead><tr><th>Time</th><th>Offer</th><th>Campaign</th><th>Country</th><th>Device</th><th>Conv?</th><th>Payout</th></tr></thead>
+              <tbody id="clicks-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== REPORTS ====== -->
+        <div id="p-reports" class="page">
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">By Offer</div></div>
+              <table class="tbl2">
+                <thead><tr><th>Offer</th><th>Clicks</th><th>Conv.</th><th>Earnings</th></tr></thead>
+                <tbody>
+                  <tr><td>$50 Amazon Gift Card</td><td>4,240</td><td>305</td><td style="color:var(--green);font-weight:700">$762.50</td></tr>
+                  <tr><td>Email Submit CPL</td><td>2,810</td><td>219</td><td style="color:var(--green);font-weight:700">$262.80</td></tr>
+                  <tr><td>Survey CPL</td><td>1,370</td><td>97</td><td style="color:var(--green);font-weight:700">$174.60</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">By Country</div></div>
+              <table class="tbl2">
+                <thead><tr><th>Country</th><th>Clicks</th><th>Earnings</th></tr></thead>
+                <tbody>
+                  <tr><td>🇺🇸 United States</td><td>5,800</td><td style="color:var(--green);font-weight:700">$820.40</td></tr>
+                  <tr><td>🇨🇦 Canada</td><td>1,420</td><td style="color:var(--green);font-weight:700">$204.80</td></tr>
+                  <tr><td>🇬🇧 United Kingdom</td><td>1,200</td><td style="color:var(--green);font-weight:700">$174.70</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct2">Daily Performance (Last 7 Days)</div></div>
+            <table class="tbl2">
+              <thead><tr><th>Date</th><th>Clicks</th><th>Conv.</th><th>CR</th><th>Revenue</th></tr></thead>
+              <tbody>
+                <tr><td>Today</td><td>284</td><td>21</td><td style="color:var(--green)">7.4%</td><td style="color:var(--green);font-weight:700">$52.50</td></tr>
+                <tr><td>Yesterday</td><td>241</td><td>18</td><td style="color:var(--green)">7.5%</td><td style="color:var(--green);font-weight:700">$44.80</td></tr>
+                <tr><td>Mar 9</td><td>310</td><td>24</td><td style="color:var(--green)">7.7%</td><td style="color:var(--green);font-weight:700">$59.20</td></tr>
+                <tr><td>Mar 8</td><td>198</td><td>14</td><td style="color:var(--yellow)">7.1%</td><td style="color:var(--green);font-weight:700">$32.00</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== OFFER REQUESTS ====== -->
+        <div id="p-requests" class="page">
+          <div class="card">
+            <div class="ch"><div class="ct2">My Offer Access Requests</div><span class="pill py">2 Pending</span></div>
+            <table class="tbl2">
+              <thead><tr><th>Offer</th><th>Payout</th><th>Requested</th><th>Status</th></tr></thead>
+              <tbody>
+                <tr>
+                  <td><strong>Free Credit Score</strong></td>
+                  <td style="color:var(--green);font-weight:700">$3.50</td>
+                  <td style="color:var(--muted)">Today, 10:42 AM</td>
+                  <td><span class="pill py">Pending Review</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Consumer Survey</strong></td>
+                  <td style="color:var(--green);font-weight:700">$1.80</td>
+                  <td style="color:var(--muted)">Yesterday</td>
+                  <td><span class="pill py">Pending Review</span></td>
+                </tr>
+                <tr>
+                  <td><strong>Finance Lead CPL</strong></td>
+                  <td style="color:var(--green);font-weight:700">$5.00</td>
+                  <td style="color:var(--muted)">Mar 8</td>
+                  <td><span class="pill pg">Approved ✓</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- ====== EARNINGS ====== -->
+        <div id="p-earnings" class="page">
+          <div class="sg4">
+            <div class="sc"><div class="scl">Total Earned</div><div class="scv">$2,841</div><div class="scc up">All time</div></div>
+            <div class="sc"><div class="scl">Pending</div><div class="scv" style="color:var(--yellow)">$318.40</div></div>
+            <div class="sc"><div class="scl">This Month</div><div class="scv">$318.40</div><div class="scc up">↑ 14%</div></div>
+            <div class="sc"><div class="scl">Sub-Pub Bonus</div><div class="scv" style="color:var(--orange)">$42.80</div></div>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">Earnings Breakdown</div></div>
+              <table class="tbl2">
+                <thead><tr><th>Offer</th><th>Conv.</th><th>Earnings</th><th>%</th></tr></thead>
+                <tbody>
+                  <tr><td>$50 Amazon Gift Card</td><td>89</td><td style="color:var(--green);font-weight:700">$222.50</td><td>70%</td></tr>
+                  <tr><td>Email Submit CPL</td><td>64</td><td style="color:var(--green);font-weight:700">$76.80</td><td>24%</td></tr>
+                  <tr><td>Survey CPL</td><td>11</td><td style="color:var(--green);font-weight:700">$19.80</td><td>6%</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Payout Schedule</div></div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <div style="padding:10px 12px;background:var(--surf2);border-radius:7px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Next payout</span><strong>Monday</strong></div>
+                <div style="padding:10px 12px;background:var(--surf2);border-radius:7px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Minimum payout</span><strong>$50 USD</strong></div>
+                <div style="padding:10px 12px;background:var(--surf2);border-radius:7px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Methods</span><strong>BTC · ETH · USDT · BNB</strong></div>
+                <div style="padding:10px 12px;background:var(--gbg);border-radius:7px;border:1px solid rgba(16,185,129,.15);display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span style="color:var(--green)">Available</span><span style="color:var(--green)">$318.40</span></div>
+                <button class="btn bp" style="width:100%;padding:11px" onclick="nav('payouts',null)">Request Crypto Payout →</button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== CRYPTO PAYOUTS ====== -->
+        <div id="p-payouts" class="page">
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">₿ Request Crypto Withdrawal</div></div>
+              <div style="padding:12px;background:var(--gbg);border:1px solid rgba(16,185,129,.15);border-radius:9px;margin-bottom:16px">
+                <div style="font-size:10px;color:var(--muted);margin-bottom:3px">Available for withdrawal</div>
+                <div style="font-size:26px;font-weight:800;color:var(--green)">$318.40 <span style="font-size:13px;font-weight:400;color:var(--muted)">USD</span></div>
+              </div>
+              <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px">Select Cryptocurrency</div>
+              <div class="cgrid">
+                <div class="cc sel" onclick="selCrypto(this,'BTC')"><div class="cicon">₿</div><div class="cnm">Bitcoin</div><div class="csym">BTC</div></div>
+                <div class="cc" onclick="selCrypto(this,'ETH')"><div class="cicon">Ξ</div><div class="cnm">Ethereum</div><div class="csym">ETH</div></div>
+                <div class="cc" onclick="selCrypto(this,'USDT')"><div class="cicon">₮</div><div class="cnm">Tether</div><div class="csym">USDT</div></div>
+                <div class="cc" onclick="selCrypto(this,'BNB')"><div class="cicon">🔶</div><div class="cnm">BNB</div><div class="csym">BNB</div></div>
+                <div class="cc" onclick="selCrypto(this,'LTC')"><div class="cicon">Ł</div><div class="cnm">Litecoin</div><div class="csym">LTC</div></div>
+                <div class="cc" onclick="selCrypto(this,'SOL')"><div class="cicon">◎</div><div class="cnm">Solana</div><div class="csym">SOL</div></div>
+              </div>
+              <div style="font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:7px">Your BTC Wallet Address</div>
+              <input class="winput" id="waddr" placeholder="bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh">
+              <div class="pconf">
+                <div class="row"><span>Amount (USD)</span><span>$318.40</span></div>
+                <div class="row"><span>Network fee (~2%)</span><span>−$6.37</span></div>
+                <div class="row"><span>You receive</span><span>≈ $312.03</span></div>
+              </div>
+              <button class="btn bp" style="width:100%;padding:12px" onclick="reqPayout()">Confirm Withdrawal →</button>
+              <div style="font-size:10px;color:var(--muted);text-align:center;margin-top:7px">Processed every Monday · Min. $50</div>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Payout History</div></div>
+              <table class="tbl2">
+                <thead><tr><th>Date</th><th>Amount</th><th>Coin</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td>Feb 3, 2026</td><td style="color:var(--green);font-weight:700">$284.20</td><td><span class="pill po">BTC</span></td><td><span class="pill pg">Sent ✓</span></td></tr>
+                  <tr><td>Jan 6, 2026</td><td style="color:var(--green);font-weight:700">$312.80</td><td><span class="pill pb2">USDT</span></td><td><span class="pill pg">Sent ✓</span></td></tr>
+                  <tr><td>Dec 2, 2025</td><td style="color:var(--green);font-weight:700">$198.50</td><td><span class="pill po">BTC</span></td><td><span class="pill pg">Sent ✓</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== REFERRAL ====== -->
+        <div id="p-referral" class="page">
+          <div class="refhero">
+            <div style="font-size:11px;color:var(--muted);margin-bottom:3px">Your Referral Code</div>
+            <div class="refcode">JOHN50</div>
+            <div style="font-size:12px;color:var(--muted)">Earn <strong style="color:var(--green)">5%</strong> of every referred publisher's earnings — lifetime</div>
+            <div style="margin-top:14px;display:flex;gap:9px;justify-content:center">
+              <button class="btn bp" onclick="showToast('Code copied! 📋')">Copy Code</button>
+              <button class="btn bo" onclick="showToast('Link copied! 🔗')">Copy Ref Link</button>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">How It Works</div></div>
+              <div style="display:flex;flex-direction:column;gap:14px">
+                <div style="display:flex;gap:11px"><div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</div><div><div style="font-size:12px;font-weight:600">Share your code</div><div style="font-size:11px;color:var(--muted)">Share JOHN50 with other publishers</div></div></div>
+                <div style="display:flex;gap:11px"><div style="width:26px;height:26px;border-radius:50%;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</div><div><div style="font-size:12px;font-weight:600">They join & earn</div><div style="font-size:11px;color:var(--muted)">When they register with your code</div></div></div>
+                <div style="display:flex;gap:11px"><div style="width:26px;height:26px;border-radius:50%;background:var(--green);color:#fff;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">$</div><div><div style="font-size:12px;font-weight:600">You earn 5% forever</div><div style="font-size:11px;color:var(--muted)">Paid in crypto, no limit, no expiry</div></div></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Referral Stats</div></div>
+              <div style="display:flex;flex-direction:column;gap:9px">
+                <div style="padding:10px 12px;background:var(--surf2);border-radius:7px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Total referred</span><strong>4</strong></div>
+                <div style="padding:10px 12px;background:var(--surf2);border-radius:7px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Active this month</span><strong>3</strong></div>
+                <div style="padding:10px 12px;background:var(--surf2);border-radius:7px;display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">Their total earnings</span><strong>$856.00</strong></div>
+                <div style="padding:10px 12px;background:var(--gbg);border-radius:7px;border:1px solid rgba(16,185,129,.15);display:flex;justify-content:space-between;font-size:13px;font-weight:700"><span style="color:var(--green)">Your 5% bonus</span><span style="color:var(--green)">$42.80</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- ====== SUB AFFILIATES ====== -->
+        <div id="p-subaffiliates" class="page">
+          <div class="sg4">
+            <div class="sc"><div class="scl">Sub-Publishers</div><div class="scv">4</div></div>
+            <div class="sc"><div class="scl">Their Clicks</div><div class="scv">6,840</div></div>
+            <div class="sc"><div class="scl">Their Earnings</div><div class="scv">$856</div></div>
+            <div class="sc"><div class="scl">Your 5% Cut</div><div class="scv" style="color:var(--orange)">$42.80</div></div>
+          </div>
+          <div class="card" id="sub-list"></div>
+        </div>
+
+        <!-- ====== SETTINGS ====== -->
+        <div id="p-settings" class="page">
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">Profile</div></div>
+              <div class="fr"><label>Full Name</label><input value="John Smith"></div>
+              <div class="fr"><label>Email</label><input type="email" value="john@email.com"></div>
+              <div class="fr"><label>Skype / Telegram</label><input value="@johnsmith"></div>
+              <div class="fr"><label>Country</label><select><option>United States</option><option>Canada</option><option>United Kingdom</option></select></div>
+              <button class="btn bp" onclick="showToast('Profile saved ✅')">Save Changes</button>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Security</div></div>
+              <div class="fr"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
+              <div class="fr"><label>New Password</label><input type="password" placeholder="Min. 8 characters"></div>
+              <div class="fr"><label>Confirm New Password</label><input type="password" placeholder="Repeat new password"></div>
+              <button class="btn bp" onclick="showToast('Password updated ✅')">Update Password</button>
+            </div>
+          </div>
+        </div>
+
+      </div><!-- pb -->
+    </div><!-- ct -->
+  </div><!-- layout -->
+
+  <!-- CHAT FAB -->
+  <div class="cfab">
+    <div class="cpanel" id="cpanel">
+      <div class="chead">
+        <div class="chi">
+          <div class="chav">M</div>
+          <div><div class="chnm">Mike — Affiliate Manager</div><div class="chst">● Online · Replies in minutes</div></div>
+        </div>
+        <button class="cclose" onclick="toggleChat()">✕</button>
+      </div>
+      <div class="cmsgs" id="cmsgs">
+        <div class="msg"><div class="bub">Hey John! Welcome to NexusCPA 👋 How can I help you today?</div><div class="mtime">Mike · 10:30 AM</div></div>
+        <div class="msg"><div class="bub">Feel free to ask about offers, payouts, or anything else!</div><div class="mtime">Mike · 10:30 AM</div></div>
+      </div>
+      <div class="cinrow">
+        <input class="cinp" id="cinp" placeholder="Type a message..." onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="csend" onclick="sendMsg()">↑</button>
+      </div>
+    </div>
+    <button class="cbub" onclick="toggleChat()">💬<span class="cunread" id="cunread">1</span></button>
+  </div>
+</div><!-- main -->
+
+<!-- OFFER MODAL -->
+<div class="modal" id="omodal"><div class="mbox"><button class="mclose" onclick="closeModal()">✕</button><div id="mbody"></div></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+// Theme
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('ticon').textContent=d?'☀️':'🌙'}
+
+// Auth
+function toAuth(s){['register','pending','login'].forEach(x=>document.getElementById('auth-'+x).style.display='none');document.getElementById('auth-'+s).style.display='flex'}
+function doRegister(){const em=document.getElementById('r-em').value,pw=document.getElementById('r-pw').value,tr=document.getElementById('r-tr').value;if(!em||!pw||!tr){showToast('Please fill all required fields');return}toAuth('pending')}
+function doLogin(){document.getElementById('auth-login').style.display='none';document.getElementById('main').style.display='block'}
+
+// Nav
+const titles={dashboard:'Dashboard',offers:'Browse Offers',links:'Tracking Links',clicks:'Clicks & Conversions',reports:'Reports',requests:'Offer Requests',earnings:'Earnings',payouts:'Crypto Payouts',referral:'Referral Program',subaffiliates:'Sub-Publishers',settings:'Account Settings'}
+function nav(p,el){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('p-'+p).classList.add('active');document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');document.getElementById('ptitle').textContent=titles[p]||p}
+
+// Toast
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3000)}
+
+// Copy
+function copyText(btn,txt){navigator.clipboard.writeText(txt).catch(()=>{});const o=btn.textContent;btn.textContent='✓ Copied';btn.style.cssText='background:var(--green);color:#fff;border-color:var(--green)';setTimeout(()=>{btn.textContent=o;btn.style.cssText=''},2000)}
+
+// Chat
+function toggleChat(){const p=document.getElementById('cpanel');p.classList.toggle('open');document.getElementById('cunread').style.display='none'}
+function sendMsg(){const i=document.getElementById('cinp'),m=i.value.trim();if(!m)return;const ms=document.getElementById('cmsgs');ms.innerHTML+=`<div class="msg msg-out"><div class="bub">${m}</div><div class="mtime">You · just now</div></div>`;i.value='';ms.scrollTop=ms.scrollHeight;setTimeout(()=>{ms.innerHTML+=`<div class="msg"><div class="bub">Thanks! I'll get back to you shortly 👍</div><div class="mtime">Mike · just now</div></div>`;ms.scrollTop=ms.scrollHeight},1200)}
+
+// Crypto
+function selCrypto(el,coin){document.querySelectorAll('.cc').forEach(c=>c.classList.remove('sel'));el.classList.add('sel');const p={'BTC':'bc1qxy2kgdygjrsqtzq2n0yrf2493p83kkfjhx0wlh','ETH':'0x71C7656EC7ab88b098defB751B7401B5f6d8976F','USDT':'TXLAQ63Xg1NAzckPwKHvkp7YesiXQ4HkLY','BNB':'bnb1jxfh2g85fka8ycx8suf4lz4t6kqnrfx2h3zq','LTC':'ltc1q3f2dqjz4a5k9p8mnw7h62c','SOL':'7EcDhSYGxXyscszYEp35KHN8vvw3svAuLKTzXwCFLtV'};document.getElementById('waddr').placeholder=p[coin]||'Your wallet address'}
+function reqPayout(){if(!document.getElementById('waddr').value){showToast('Please enter your wallet address');return}showToast('Payout request submitted! ₿ Processing Monday')}
+
+// OFFERS DATA
+const allOffers=[
+  {id:1,cat:'Gift Cards',nm:'$50 Amazon Gift Card',pay:'$2.80',epc:'$0.20',cr:'7.2%',geo:'US, CA, UK',locked:false,desc:'Email submit to win $50 Amazon Gift Card. High converting, works great with social traffic.'},
+  {id:2,cat:'Gift Cards',nm:'$100 Visa Gift Card',pay:'$4.00',epc:'$0.24',cr:'6.1%',geo:'US Only',locked:false,desc:'Premium Visa gift card offer. User registers to win $100.'},
+  {id:3,cat:'Survey / CPL',nm:'Email Submit CPL',pay:'$1.20',epc:'$0.09',cr:'7.8%',geo:'US, CA, AU, UK',locked:false,desc:'High volume email submit. Works great with any traffic source.'},
+  {id:4,cat:'Finance',nm:'Free Credit Score',pay:'$3.50',epc:'$0.21',cr:'6.0%',geo:'US Only',locked:true,desc:'Premium finance offer. Requires quality traffic. Request access for review.'},
+  {id:5,cat:'App Install',nm:'Mobile App CPI',pay:'$0.80',epc:'$0.06',cr:'7.5%',geo:'Global',locked:false,desc:'App install offer for iOS and Android. Global traffic accepted.'},
+  {id:6,cat:'Survey / CPL',nm:'Consumer Survey',pay:'$1.80',epc:'$0.14',cr:'7.8%',geo:'US, CA',locked:true,desc:'Exclusive survey. Request access based on traffic quality and performance.'},
+];
+function renderOffers(filter=''){const g=document.getElementById('offer-grid');g.innerHTML=allOffers.filter(o=>!filter||o.cat===filter).map(o=>`
+<div class="oc${o.locked?' locked':''}" onclick="openOffer(${o.id})">
+  ${o.locked?'<div class="lock-badge">🔒 Request</div>':'<div class="open-badge">● Open</div>'}
+  <div class="ocat">${o.cat}</div>
+  <div class="onm">${o.nm}</div>
+  <div class="opay">${o.pay} <span style="font-size:10px;color:var(--muted);font-weight:400">per conv.</span></div>
+  <div class="ometa"><span>EPC ${o.epc}</span><span>CR ${o.cr}</span><span>🌍 ${o.geo}</span></div>
+  <div class="oact"><button class="btn ${o.locked?'bo':'bp'} bsm" onclick="event.stopPropagation();${o.locked?'reqOffer('+o.id+')':'openOffer('+o.id+')'}">${o.locked?'Request Access':'Get Link'}</button></div>
+</div>`).join('')}
+function filterOffers(v){renderOffers(v)}
+renderOffers();
+
+function openOffer(id){const o=allOffers.find(x=>x.id===id);document.getElementById('mbody').innerHTML=`
+<div style="font-size:9px;color:var(--accent);font-weight:700;text-transform:uppercase;letter-spacing:1px;margin-bottom:7px">${o.cat}</div>
+<h3 style="font-size:18px;font-weight:800;letter-spacing:-.5px;margin-bottom:9px">${o.nm}</h3>
+<p style="font-size:12px;color:var(--muted);margin-bottom:16px;line-height:1.7">${o.desc}</p>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:9px;margin-bottom:16px">
+  <div style="background:var(--surf2);padding:11px;border-radius:7px;text-align:center"><div style="font-size:18px;font-weight:800;color:var(--green)">${o.pay}</div><div style="font-size:9px;color:var(--muted)">Payout</div></div>
+  <div style="background:var(--surf2);padding:11px;border-radius:7px;text-align:center"><div style="font-size:18px;font-weight:800">${o.epc}</div><div style="font-size:9px;color:var(--muted)">EPC</div></div>
+  <div style="background:var(--surf2);padding:11px;border-radius:7px;text-align:center"><div style="font-size:18px;font-weight:800">${o.cr}</div><div style="font-size:9px;color:var(--muted)">Conv. Rate</div></div>
+</div>
+${o.locked?`<div style="background:var(--ybg);border:1px solid rgba(245,158,11,.2);border-radius:8px;padding:12px;margin-bottom:14px;font-size:12px;color:var(--yellow)">🔒 This offer requires approval. Our team reviews based on your traffic quality and performance.</div><button class="btn bp" style="width:100%;padding:11px" onclick="reqOffer(${o.id});closeModal()">Request Access →</button>`
+:`<div class="fr"><label>Campaign Name / Sub ID</label><input type="text" id="subi" placeholder="e.g. facebook_v1"></div><div class="lbox" id="genlinkbox" style="display:none;margin-bottom:12px"><span class="ltext" id="genlinktext"></span><button class="cbtn" onclick="copyGenLink()">Copy</button></div><button class="btn bp" style="width:100%;padding:11px" onclick="genLink(${o.id})">Generate Tracking Link →</button>`}`;
+document.getElementById('omodal').classList.add('open')}
+function closeModal(){document.getElementById('omodal').classList.remove('open')}
+function genLink(id){const s=document.getElementById('subi').value||'default';document.getElementById('genlinktext').textContent=`https://track.nexuscpa.com/c?o=${id}&a=123&s1=${s}`;document.getElementById('genlinkbox').style.display='flex'}
+function copyGenLink(){navigator.clipboard.writeText(document.getElementById('genlinktext').textContent).catch(()=>{});showToast('Tracking link copied! 🔗')}
+function reqOffer(id){const o=allOffers.find(x=>x.id===id);showToast(`Request sent for "${o.nm}" — we'll review within 24h ✅`);document.getElementById('reqbdg').textContent=parseInt(document.getElementById('reqbdg').textContent)+1}
+
+// LINKS TABLE
+document.getElementById('links-tbody').innerHTML=[
+  {o:'$50 Amazon Gift Card',s:'fb_camp1',link:'https://track.nexuscpa.com/c?o=1&a=123&s1=fb_camp1',cl:1240,cv:89,e:'$222.50'},
+  {o:'Email Submit CPL',s:'tiktok_v2',link:'https://track.nexuscpa.com/c?o=3&a=123&s1=tiktok_v2',cl:820,cv:64,e:'$76.80'},
+  {o:'$100 Visa Gift Card',s:'youtube_m',link:'https://track.nexuscpa.com/c?o=2&a=123&s1=youtube_m',cl:340,cv:11,e:'$44.00'},
+].map(r=>`<tr><td>${r.o}</td><td><code style="font-size:10px;background:var(--surf2);padding:2px 5px;border-radius:4px">${r.s}</code></td><td><div class="lbox" style="padding:6px 10px"><span class="ltext">${r.link}</span><button class="cbtn" onclick="copyText(this,'${r.link}')">Copy</button></div></td><td>${r.cl.toLocaleString()}</td><td>${r.cv}</td><td style="color:var(--green);font-weight:700">${r.e}</td></tr>`).join('');
+
+// CLICKS TABLE
+document.getElementById('clicks-tbody').innerHTML=[
+  {t:'13:42',o:'$50 Gift Card',s:'fb_camp1',c:'🇺🇸 US',d:'Mobile',cv:true,p:'$2.50'},
+  {t:'13:28',o:'Email Submit',s:'tiktok_v2',c:'🇺🇸 US',d:'Mobile',cv:false,p:'—'},
+  {t:'13:11',o:'$50 Gift Card',s:'fb_camp1',c:'🇨🇦 CA',d:'Desktop',cv:true,p:'$2.50'},
+  {t:'12:58',o:'Survey CPL',s:'blog_seo',c:'🇬🇧 UK',d:'Mobile',cv:true,p:'$1.80'},
+  {t:'12:30',o:'Email Submit',s:'tiktok_v2',c:'🇺🇸 US',d:'Mobile',cv:true,p:'$1.20'},
+].map(r=>`<tr><td style="color:var(--muted)">${r.t}</td><td>${r.o}</td><td><code style="font-size:9px;background:var(--surf2);padding:1px 4px;border-radius:3px">${r.s}</code></td><td>${r.c}</td><td>${r.d}</td><td>${r.cv?'<span class="pill pg">✓ Yes</span>':'<span style="color:var(--muted)">—</span>'}</td><td style="color:var(--green);font-weight:700">${r.p}</td></tr>`).join('');
+
+// SUB LIST
+const subs=[{n:'Karim Hossain',id:'AFF-00189',cl:2840,cv:210,e:'$525.00',cut:'$26.25',col:'#e8401a'},{n:'Nadia Sultana',id:'AFF-00201',cl:1920,cv:148,e:'$214.80',cut:'$10.74',col:'#10b981'},{n:'Farhan Rahman',id:'AFF-00215',cl:1480,cv:102,e:'$91.80',cut:'$4.59',col:'#4a6cf7'},{n:'Shirin Akter',id:'AFF-00240',cl:600,cv:24,e:'$24.00',cut:'$1.22',col:'#7c3aed'}];
+document.getElementById('sub-list').innerHTML='<div class="ch"><div class="ct2">Sub-Publisher Network</div></div>'+subs.map(s=>`<div class="subi"><div class="subav" style="background:${s.col}">${s.n[0]}</div><div><div style="font-size:12px;font-weight:600">${s.n}</div><div style="font-size:10px;color:var(--muted)">${s.id}</div></div><div style="display:flex;gap:18px;margin-left:auto;align-items:center"><div style="text-align:center"><div style="font-size:12px;font-weight:600">${s.cl.toLocaleString()}</div><div style="font-size:9px;color:var(--muted)">Clicks</div></div><div style="text-align:center"><div style="font-size:12px;font-weight:600">${s.cv}</div><div style="font-size:9px;color:var(--muted)">Conv.</div></div><div style="text-align:right"><div style="font-size:13px;font-weight:800;color:var(--green)">${s.e}</div><div style="font-size:10px;color:var(--muted)">Your cut: ${s.cut}</div></div></div></div>`).join('');
+</script>
+</body>
+</html>

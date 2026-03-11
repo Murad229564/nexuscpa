@@ -1,0 +1,706 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NexusCPA — Advertiser Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+[data-theme="dark"]{--bg:#07090f;--surf:#0c0f1a;--surf2:#111520;--surf3:#161d2c;--border:#192036;--text:#dde2f2;--muted:#4e5878;--input:#111520;--shadow:0 2px 18px rgba(0,0,0,.55)}
+[data-theme="light"]{--bg:#edf0f9;--surf:#ffffff;--surf2:#f2f5fc;--surf3:#e8ecf7;--border:#d4d9ee;--text:#0c1221;--muted:#687298;--input:#f2f5fc;--shadow:0 2px 12px rgba(0,0,0,.06)}
+:root{--acc:#3b82f6;--a2:#6366f1;--grn:#22c55e;--gbg:rgba(34,197,94,.1);--red:#ef4444;--rbg:rgba(239,68,68,.1);--ylw:#f59e0b;--ybg:rgba(245,158,11,.1);--org:#f97316;--sw:248px}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Sora',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;transition:background .25s,color .25s}
+
+/* AUTH */
+.aw{display:flex;min-height:100vh}
+.al{flex:1;background:linear-gradient(145deg,#05070d,#0a1624);display:flex;flex-direction:column;justify-content:space-between;padding:48px;position:relative;overflow:hidden}
+[data-theme="light"] .al{background:linear-gradient(145deg,#152048,#1e3572)}
+.al::before{content:'';position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.15),transparent 65%);top:-120px;right:-80px;pointer-events:none}
+.al::after{content:'';position:absolute;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(99,102,241,.1),transparent 65%);bottom:-60px;left:-60px;pointer-events:none}
+.agrid{position:absolute;inset:0;background-image:linear-gradient(rgba(59,130,246,.05) 1px,transparent 1px),linear-gradient(90deg,rgba(59,130,246,.05) 1px,transparent 1px);background-size:44px 44px;mask-image:radial-gradient(ellipse 80% 80% at 50% 50%,#000,transparent)}
+.alogo{font-size:20px;font-weight:800;color:#fff;position:relative;z-index:1;letter-spacing:-.5px}
+.alogo span{color:var(--acc)}
+.atag{position:relative;z-index:1}
+.atag h2{font-size:clamp(26px,3vw,40px);font-weight:800;color:#fff;line-height:1.2;letter-spacing:-1px;margin-bottom:12px}
+.atag p{color:rgba(255,255,255,.5);font-size:13px;line-height:1.7}
+.astats{display:flex;gap:32px;position:relative;z-index:1}
+.astat .n{font-size:24px;font-weight:800;color:var(--acc);letter-spacing:-1px}
+.astat .l{font-size:10px;color:rgba(255,255,255,.4);margin-top:2px}
+.ar{width:460px;background:var(--surf);display:flex;align-items:center;justify-content:center;padding:48px 44px}
+.afb{width:100%}
+.afb h3{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:4px}
+.afb .sub{font-size:12px;color:var(--muted);margin-bottom:24px}
+
+/* PENDING */
+.pend{text-align:center;padding:28px 12px}
+.pend .icon{font-size:54px;margin-bottom:14px}
+.pend h3{font-size:19px;font-weight:700;margin-bottom:8px}
+.pend p{font-size:12px;color:var(--muted);line-height:1.7}
+
+/* FORM */
+.fr{margin-bottom:13px}
+.fr label{display:block;font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:5px}
+.fr input,.fr select,.fr textarea{width:100%;padding:10px 13px;background:var(--input);border:1.5px solid var(--border);border-radius:8px;color:var(--text);font-family:'Sora',sans-serif;font-size:12px;outline:none;transition:border-color .2s}
+.fr input:focus,.fr select:focus,.fr textarea:focus{border-color:var(--acc)}
+.fr textarea{resize:vertical;min-height:70px}
+.fc{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.abtn{width:100%;padding:12px;background:var(--acc);color:#fff;border:none;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;font-family:'Sora',sans-serif;transition:all .2s;margin-top:4px}
+.abtn:hover{background:#2563eb;transform:translateY(-1px)}
+.asw{text-align:center;margin-top:14px;font-size:12px;color:var(--muted)}
+.asw a{color:var(--acc);cursor:pointer;font-weight:600}
+
+/* ANN BAR */
+.ann{background:linear-gradient(90deg,var(--acc),var(--a2));padding:8px 20px;text-align:center;font-size:12px;font-weight:600;color:#fff;display:flex;align-items:center;justify-content:center;gap:10px;position:relative}
+.ann-x{position:absolute;right:16px;background:none;border:none;color:rgba(255,255,255,.6);cursor:pointer;font-size:16px}
+
+/* SIDEBAR */
+.layout{display:flex}
+.sb{width:var(--sw);min-height:100vh;background:var(--surf);border-right:1px solid var(--border);position:fixed;left:0;top:0;z-index:100;display:flex;flex-direction:column;transition:background .25s}
+.stop{padding:16px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between}
+.slogo{font-size:17px;font-weight:800;letter-spacing:-.5px}
+.slogo span{color:var(--acc)}
+.stag{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-top:1px}
+.tbtn{background:var(--surf2);border:1px solid var(--border);border-radius:7px;padding:5px 9px;cursor:pointer;font-size:14px;color:var(--text);transition:.2s}
+nav{padding:10px 8px;flex:1;overflow-y:auto}
+.ns{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;padding:10px 8px 4px}
+.ni{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:12px;color:var(--muted);transition:all .15s;margin-bottom:1px}
+.ni:hover{background:var(--surf2);color:var(--text)}
+.ni.active{background:rgba(59,130,246,.12);color:var(--acc);font-weight:600}
+.ni .ico{font-size:14px;width:17px;text-align:center}
+.ni .bdg{margin-left:auto;background:var(--acc);color:#fff;font-size:9px;font-weight:700;padding:2px 6px;border-radius:20px}
+.su{padding:10px 12px;border-top:1px solid var(--border)}
+.suc{display:flex;align-items:center;gap:9px;padding:9px;background:var(--surf2);border-radius:9px}
+.sav{width:30px;height:30px;border-radius:7px;background:var(--acc);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:12px;color:#fff;flex-shrink:0}
+.snm{font-size:12px;font-weight:600}
+.sid{font-size:10px;color:var(--muted)}
+.son{margin-left:auto;width:7px;height:7px;border-radius:50%;background:var(--grn)}
+
+/* CONTENT */
+.ct{margin-left:var(--sw);flex:1}
+.topbar{display:flex;justify-content:space-between;align-items:center;padding:18px 26px;border-bottom:1px solid var(--border);background:var(--surf);position:sticky;top:0;z-index:50}
+.tb1 h2{font-size:17px;font-weight:700;letter-spacing:-.3px}
+.tb1 p{font-size:11px;color:var(--muted);margin-top:2px}
+.tbr{display:flex;gap:9px;align-items:center}
+.ibtn{background:var(--surf2);border:1px solid var(--border);border-radius:7px;padding:7px 11px;cursor:pointer;font-size:14px;color:var(--text);position:relative;transition:.2s}
+.ndot{position:absolute;top:3px;right:3px;width:7px;height:7px;border-radius:50%;background:var(--red)}
+.pb{padding:22px 26px}
+.page{display:none}
+.page.active{display:block}
+
+/* STATS */
+.sg4{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}
+.sg3{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:18px}
+.sc{background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:16px;box-shadow:var(--shadow)}
+.scl{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px}
+.scv{font-size:22px;font-weight:800;letter-spacing:-.5px;margin-bottom:3px}
+.scc{font-size:11px}
+.up{color:var(--grn)}.dn{color:var(--red)}.neu{color:var(--ylw)}
+
+/* CARD */
+.card{background:var(--surf);border:1px solid var(--border);border-radius:11px;padding:18px;box-shadow:var(--shadow);margin-bottom:14px}
+.ch{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px;flex-wrap:wrap;gap:9px}
+.ct2{font-size:13px;font-weight:700}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px}
+.g3l{display:grid;grid-template-columns:2fr 1fr;gap:14px;margin-bottom:14px}
+
+/* BTN */
+.btn{padding:7px 14px;border-radius:7px;font-size:11px;font-weight:600;cursor:pointer;border:none;transition:all .15s;font-family:'Sora',sans-serif}
+.bp{background:var(--acc);color:#fff}.bp:hover{background:#2563eb}
+.bo{background:transparent;border:1px solid var(--border);color:var(--text)}.bo:hover{border-color:var(--acc);color:var(--acc)}
+.bg2{background:var(--gbg);color:var(--grn);border:1px solid rgba(34,197,94,.2)}
+.br{background:var(--rbg);color:var(--red);border:1px solid rgba(239,68,68,.2)}
+.by{background:var(--ybg);color:var(--ylw);border:1px solid rgba(245,158,11,.2)}
+.bsm{padding:5px 10px;font-size:10px}
+
+/* TABLE */
+.tbl{width:100%;border-collapse:collapse}
+.tbl th{font-size:9px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;padding:7px 11px;text-align:left;border-bottom:1px solid var(--border)}
+.tbl td{padding:10px 11px;font-size:12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.tbl tr:last-child td{border-bottom:none}
+.tbl tbody tr:hover td{background:var(--surf2)}
+
+/* PILL */
+.pill{display:inline-flex;align-items:center;gap:3px;padding:3px 8px;border-radius:20px;font-size:10px;font-weight:600}
+.pg{background:var(--gbg);color:var(--grn)}.py{background:var(--ybg);color:var(--ylw)}.pr{background:var(--rbg);color:var(--red)}.pb{background:rgba(59,130,246,.12);color:var(--acc)}.po{background:rgba(249,115,22,.12);color:var(--org)}
+
+/* MODAL */
+.modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.65);z-index:300;align-items:center;justify-content:center}
+.modal.open{display:flex}
+.mbox{background:var(--surf);border:1px solid var(--border);border-radius:14px;padding:26px;width:520px;max-width:92vw;max-height:88vh;overflow-y:auto;position:relative}
+.mclose{position:absolute;top:12px;right:12px;background:none;border:none;color:var(--muted);font-size:17px;cursor:pointer}
+
+/* OFFER GRID */
+.ogrid{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+.oc{background:var(--surf);border:1.5px solid var(--border);border-radius:11px;padding:14px;position:relative;overflow:hidden;transition:all .2s}
+.oc:hover{border-color:var(--acc)}
+.ocat{font-size:9px;font-weight:700;color:var(--acc);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.onm{font-size:13px;font-weight:700;margin-bottom:3px}
+.opay{font-size:18px;font-weight:800;color:var(--grn)}
+.ometa{display:flex;gap:9px;margin:7px 0 11px;font-size:11px;color:var(--muted)}
+.oact{display:flex;justify-content:space-between;align-items:center;gap:7px;flex-wrap:wrap}
+
+/* CHAT */
+.cfab{position:fixed;bottom:22px;right:22px;z-index:200}
+.cbub{width:50px;height:50px;border-radius:50%;background:var(--acc);border:none;cursor:pointer;font-size:20px;box-shadow:0 4px 20px rgba(59,130,246,.45);display:flex;align-items:center;justify-content:center;transition:.2s;position:relative}
+.cbub:hover{transform:scale(1.1)}
+.cunread{position:absolute;top:-2px;right:-2px;width:17px;height:17px;border-radius:50%;background:var(--red);color:#fff;font-size:8px;font-weight:700;display:flex;align-items:center;justify-content:center;border:2px solid var(--surf)}
+.cpanel{position:fixed;bottom:82px;right:22px;width:300px;background:var(--surf);border:1px solid var(--border);border-radius:14px;box-shadow:0 8px 36px rgba(0,0,0,.3);z-index:200;display:none;flex-direction:column;overflow:hidden;max-height:400px}
+.cpanel.open{display:flex}
+.chead{padding:12px 14px;background:var(--acc);display:flex;align-items:center;justify-content:space-between}
+.chi{display:flex;align-items:center;gap:9px}
+.chav{width:32px;height:32px;border-radius:50%;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-weight:700;font-size:13px;color:#fff}
+.chnm{font-size:12px;font-weight:700;color:#fff}
+.chst{font-size:10px;color:rgba(255,255,255,.7)}
+.cclose{background:none;border:none;color:rgba(255,255,255,.7);cursor:pointer;font-size:17px}
+.cmsgs{flex:1;overflow-y:auto;padding:12px;display:flex;flex-direction:column;gap:9px}
+.msg .bub{background:var(--surf2);border-radius:10px 10px 10px 0;padding:8px 11px;font-size:11px;line-height:1.5;display:inline-block}
+.msg-out{align-self:flex-end}
+.msg-out .bub{background:var(--acc);color:#fff;border-radius:10px 10px 0 10px;padding:8px 11px;font-size:11px;line-height:1.5;display:inline-block}
+.mtime{font-size:9px;color:var(--muted);margin-top:2px;padding:0 3px}
+.msg-out .mtime{text-align:right}
+.cinrow{padding:9px 11px;border-top:1px solid var(--border);display:flex;gap:7px}
+.cinp{flex:1;padding:8px 11px;background:var(--input);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none}
+.csend{background:var(--acc);border:none;border-radius:7px;padding:8px 13px;cursor:pointer;color:#fff;font-size:13px}
+
+/* BALANCE / BILLING */
+.bal-card{background:linear-gradient(135deg,rgba(59,130,246,.15),rgba(99,102,241,.1));border:1px solid rgba(59,130,246,.25);border-radius:12px;padding:22px;margin-bottom:18px;position:relative;overflow:hidden}
+.bal-card::before{content:'';position:absolute;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,rgba(59,130,246,.1),transparent 65%);top:-60px;right:-40px}
+.bal-amount{font-size:36px;font-weight:800;letter-spacing:-1px;color:var(--text)}
+.bal-label{font-size:11px;color:var(--muted);margin-bottom:6px}
+
+/* TOAST */
+.toast{position:fixed;bottom:22px;right:22px;background:var(--surf);border:1px solid var(--border);color:var(--text);padding:10px 16px;border-radius:9px;font-size:12px;font-weight:600;transform:translateY(60px);opacity:0;transition:all .3s;z-index:999;box-shadow:0 4px 18px rgba(0,0,0,.2)}
+.toast.show{transform:translateY(0);opacity:1}
+
+/* POSTBACK */
+.pb-box{background:var(--surf2);border:1px solid var(--border);border-radius:9px;padding:14px;display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.pb-code{font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--acc);flex:1;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.copy-btn{background:var(--surf3);border:1px solid var(--border);color:var(--text);border-radius:5px;padding:4px 9px;font-size:10px;font-weight:600;cursor:pointer;white-space:nowrap;transition:.15s}
+.copy-btn:hover{background:var(--acc);color:#fff;border-color:var(--acc)}
+
+@media(max-width:900px){.sg4{grid-template-columns:1fr 1fr}.ogrid{grid-template-columns:1fr 1fr}.g2,.g3l{grid-template-columns:1fr}.sb{display:none}.ct{margin-left:0}}
+</style>
+</head>
+<body>
+
+<!-- AUTH: REGISTER -->
+<div id="auth-register" class="aw">
+  <div class="al">
+    <div class="agrid"></div>
+    <div class="alogo">Nexus<span>CPA</span> <span style="font-size:10px;color:rgba(255,255,255,.3);font-weight:400;vertical-align:middle;margin-left:6px">📍 Delaware, USA</span></div>
+    <div class="atag">
+      <h2>Advertise.<br>Scale your offers.</h2>
+      <p>Reach 14,000+ active publishers. Pay only for results. Advanced fraud protection included.</p>
+    </div>
+    <div class="astats">
+      <div class="astat"><div class="n">14K+</div><div class="l">Publishers</div></div>
+      <div class="astat"><div class="n">$3.2M</div><div class="l">Monthly volume</div></div>
+      <div class="astat"><div class="n">0.9%</div><div class="l">Fraud rate</div></div>
+    </div>
+  </div>
+  <div class="ar"><div class="afb">
+    <h3>Create Advertiser Account</h3>
+    <p class="sub">Free to join · Reviewed within 24 hours</p>
+    <div class="fc">
+      <div class="fr"><label>First Name</label><input id="r-fn" placeholder="John"></div>
+      <div class="fr"><label>Last Name</label><input id="r-ln" placeholder="Smith"></div>
+    </div>
+    <div class="fr"><label>Company Name</label><input id="r-co" placeholder="Your Company Inc."></div>
+    <div class="fr"><label>Business Email</label><input id="r-em" type="email" placeholder="you@company.com"></div>
+    <div class="fr"><label>Password</label><input id="r-pw" type="password" placeholder="Min. 8 characters"></div>
+    <div class="fr"><label>Estimated Monthly Budget (USD)</label>
+      <select id="r-bud">
+        <option value="">— Select budget range —</option>
+        <option>Under $1,000</option><option>$1,000–$5,000</option><option>$5,000–$20,000</option><option>$20,000+</option>
+      </select>
+    </div>
+    <div class="fr"><label>Offer Type</label>
+      <select id="r-type">
+        <option value="">— What do you want to promote? —</option>
+        <option>Gift Cards / Incentive</option><option>Survey / CPL</option><option>Finance / Insurance</option>
+        <option>App Install / CPI</option><option>E-commerce</option><option>Other</option>
+      </select>
+    </div>
+    <div style="font-size:11px;color:var(--muted);margin-bottom:12px">By registering you agree to our <a href="#" style="color:var(--acc)">Terms</a> & <a href="#" style="color:var(--acc)">Privacy Policy</a>.</div>
+    <button class="abtn" onclick="doRegister()">Submit Application →</button>
+    <div class="asw">Already have an account? <a onclick="toAuth('login')">Sign In</a></div>
+  </div></div>
+</div>
+
+<!-- AUTH: PENDING -->
+<div id="auth-pending" style="display:none" class="aw">
+  <div class="al"><div class="agrid"></div>
+    <div class="alogo">Nexus<span>CPA</span></div>
+    <div class="atag"><h2>Application submitted!</h2><p>Our team will review within 24 hours.</p></div>
+    <div class="astats"><div class="astat"><div class="n">24h</div><div class="l">Review time</div></div></div>
+  </div>
+  <div class="ar"><div class="afb"><div class="pend">
+    <div class="icon">⏳</div>
+    <h3>Under Review</h3>
+    <p>Your advertiser account is <strong>pending approval</strong>. We'll verify your offer type and business details.<br><br>Once approved, you can deposit funds and create offers.<br><br>Contact: <strong>advertiser@nexuscpa.com</strong></p>
+    <div style="margin-top:20px;padding:14px;background:var(--surf2);border-radius:9px;border:1px solid var(--border);font-size:11px;color:var(--muted);text-align:left;line-height:2">
+      <strong style="color:var(--text)">Next steps after approval:</strong><br>
+      1. Deposit funds to your account<br>
+      2. Create your first offer<br>
+      3. Publishers start promoting<br>
+      4. Track results in real-time
+    </div>
+    <button class="abtn" style="margin-top:18px" onclick="toAuth('login')">Go to Login</button>
+  </div></div></div>
+</div>
+
+<!-- AUTH: LOGIN -->
+<div id="auth-login" style="display:none" class="aw">
+  <div class="al"><div class="agrid"></div>
+    <div class="alogo">Nexus<span>CPA</span></div>
+    <div class="atag"><h2>Welcome back,<br>advertiser.</h2><p>Manage your campaigns and track ROI in real-time.</p></div>
+    <div class="astats">
+      <div class="astat"><div class="n">CPA</div><div class="l">Only pay for results</div></div>
+      <div class="astat"><div class="n">Real-time</div><div class="l">Conversion tracking</div></div>
+    </div>
+  </div>
+  <div class="ar"><div class="afb">
+    <h3>Advertiser Sign In</h3>
+    <p class="sub">Access your campaign dashboard</p>
+    <div class="fr"><label>Business Email</label><input type="email" value="demo@advertiser.com"></div>
+    <div class="fr"><label>Password</label><input type="password" value="demo1234"></div>
+    <a href="#" style="display:block;text-align:right;font-size:11px;color:var(--acc);margin-bottom:12px">Forgot password?</a>
+    <button class="abtn" onclick="doLogin()">Sign In →</button>
+    <div class="asw">New advertiser? <a onclick="toAuth('register')">Create account</a></div>
+  </div></div>
+</div>
+
+<!-- MAIN APP -->
+<div id="main" style="display:none">
+  <!-- Announcement Bar -->
+  <div class="ann" id="annbar">
+    <span>📣 <strong>Notice:</strong> Postback URL format updated — please verify your integration in Settings</span>
+    <button class="ann-x" onclick="this.parentElement.style.display='none'">✕</button>
+  </div>
+
+  <div class="layout">
+    <aside class="sb">
+      <div class="stop">
+        <div><div class="slogo">Nexus<span>CPA</span></div><div class="stag">Advertiser · USA 🇺🇸</div></div>
+        <button class="tbtn" id="ticon" onclick="toggleTheme()">🌙</button>
+      </div>
+      <nav>
+        <div class="ns">Overview</div>
+        <div class="ni active" onclick="nav('dashboard',this)"><span class="ico">📊</span> Dashboard</div>
+        <div class="ns">Campaigns</div>
+        <div class="ni" onclick="nav('my-offers',this)"><span class="ico">🎯</span> My Offers</div>
+        <div class="ni" onclick="nav('create-offer',this)"><span class="ico">➕</span> Create Offer</div>
+        <div class="ni" onclick="nav('conversions',this)"><span class="ico">✅</span> Conversions</div>
+        <div class="ni" onclick="nav('reports',this)"><span class="ico">📈</span> Reports</div>
+        <div class="ns">Finance</div>
+        <div class="ni" onclick="nav('billing',this)"><span class="ico">💳</span> Billing & Deposit</div>
+        <div class="ni" onclick="nav('invoices',this)"><span class="ico">🧾</span> Invoices</div>
+        <div class="ns">Settings</div>
+        <div class="ni" onclick="nav('postback',this)"><span class="ico">🔗</span> Postback Setup</div>
+        <div class="ni" onclick="nav('fraud-settings',this)"><span class="ico">🛡️</span> Fraud Rules</div>
+        <div class="ni" onclick="nav('account',this)"><span class="ico">⚙️</span> Account</div>
+      </nav>
+      <div class="su"><div class="suc">
+        <div class="sav">G</div>
+        <div><div class="snm">GiftPro LLC</div><div class="sid">ADV-00041</div></div>
+        <div class="son"></div>
+      </div></div>
+    </aside>
+
+    <div class="ct">
+      <div class="topbar">
+        <div class="tb1"><h2 id="ptitle">Dashboard</h2><p id="psub">Good morning, GiftPro LLC 👋</p></div>
+        <div class="tbr">
+          <button class="ibtn" onclick="nav('create-offer',null)">➕ New Offer</button>
+          <button class="ibtn" onclick="showToast('No new notifications')" style="position:relative">🔔<span class="ndot"></span></button>
+          <button class="btn bp bsm" onclick="nav('billing',null)">+ Add Funds</button>
+        </div>
+      </div>
+
+      <div class="pb">
+
+        <!-- DASHBOARD -->
+        <div id="p-dashboard" class="page active">
+          <div class="sg4">
+            <div class="sc"><div class="scl">Today Conversions</div><div class="scv">284</div><div class="scc up">↑ 12%</div></div>
+            <div class="sc"><div class="scl">Today Spend</div><div class="scv" style="color:var(--red)">$796</div><div class="scc neu">Budget: $1,000/day</div></div>
+            <div class="sc"><div class="scl">Cost Per Conv.</div><div class="scv">$2.80</div><div class="scc up">On target</div></div>
+            <div class="sc"><div class="scl">Fraud Blocked</div><div class="scv" style="color:var(--grn)">99.1%</div><div class="scc up">Clean traffic</div></div>
+          </div>
+          <div class="g3l">
+            <div class="card">
+              <div class="ch"><div class="ct2">Recent Conversions</div><span class="pill pg">● Live</span></div>
+              <table class="tbl">
+                <thead><tr><th>Publisher</th><th>Offer</th><th>Cost</th><th>Fraud Score</th><th>Status</th><th>Time</th></tr></thead>
+                <tbody>
+                  <tr><td>AFF-00123</td><td>$50 Gift Card</td><td style="color:var(--red)">$2.50</td><td><span class="pill pg">Clean (8)</span></td><td><span class="pill pg">Approved</span></td><td style="color:var(--muted)">3m</td></tr>
+                  <tr><td>AFF-00189</td><td>$50 Gift Card</td><td style="color:var(--red)">$2.50</td><td><span class="pill py">Medium (42)</span></td><td><span class="pill py">Pending</span></td><td style="color:var(--muted)">8m</td></tr>
+                  <tr><td>AFF-00201</td><td>Email Submit</td><td style="color:var(--red)">$1.20</td><td><span class="pill pg">Clean (12)</span></td><td><span class="pill pg">Approved</span></td><td style="color:var(--muted)">22m</td></tr>
+                  <tr><td>AFF-00215</td><td>$50 Gift Card</td><td style="color:var(--red)">$2.50</td><td><span class="pill pr">High (88)</span></td><td><span class="pill pr">Rejected</span></td><td style="color:var(--muted)">35m</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:12px">
+              <div class="card" style="margin-bottom:0">
+                <div class="ct2" style="margin-bottom:11px">Account Balance</div>
+                <div style="font-size:28px;font-weight:800;color:var(--acc)">$5,180</div>
+                <div style="font-size:11px;color:var(--muted);margin-bottom:10px">USD · Updated now</div>
+                <div style="height:5px;background:var(--surf2);border-radius:3px;overflow:hidden;margin-bottom:8px"><div style="height:100%;width:74%;background:linear-gradient(90deg,var(--acc),var(--a2));border-radius:3px"></div></div>
+                <div style="font-size:10px;color:var(--muted)">$14,820 spent of $20,000 total</div>
+                <button class="btn bp" style="width:100%;margin-top:12px;padding:10px" onclick="nav('billing',null)">+ Add Funds</button>
+              </div>
+              <div class="card" style="margin-bottom:0">
+                <div class="ct2" style="margin-bottom:10px">Fraud Saved</div>
+                <div style="font-size:22px;font-weight:800;color:var(--grn)">$842</div>
+                <div style="font-size:11px;color:var(--muted)">127 clicks blocked today</div>
+              </div>
+            </div>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">Active Offers Performance</div></div>
+              <table class="tbl">
+                <thead><tr><th>Offer</th><th>Conv.</th><th>Spend</th><th>Status</th></tr></thead>
+                <tbody>
+                  <tr><td><strong>$50 Amazon Gift Card</strong></td><td>18,420</td><td style="color:var(--red);font-weight:700">$46,050</td><td><span class="pill pg">Active</span></td></tr>
+                  <tr><td><strong>$100 Visa Gift Card</strong></td><td>5,824</td><td style="color:var(--red);font-weight:700">$23,296</td><td><span class="pill pg">Active</span></td></tr>
+                  <tr><td><strong>Email Submit CPL</strong></td><td>8,240</td><td style="color:var(--red);font-weight:700">$9,888</td><td><span class="pill pg">Active</span></td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Today by Hour</div></div>
+              <div style="display:flex;flex-direction:column;gap:7px">
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">9 AM – 12 PM</span><div><strong>84 conv.</strong> <span style="color:var(--red);margin-left:8px">$235</span></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">12 PM – 3 PM</span><div><strong>112 conv.</strong> <span style="color:var(--red);margin-left:8px">$314</span></div></div>
+                <div style="display:flex;justify-content:space-between;font-size:12px"><span style="color:var(--muted)">3 PM – 6 PM</span><div><strong>88 conv.</strong> <span style="color:var(--red);margin-left:8px">$247</span></div></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- MY OFFERS -->
+        <div id="p-my-offers" class="page">
+          <div style="display:flex;justify-content:flex-end;margin-bottom:14px"><button class="btn bp" onclick="nav('create-offer',null)">+ Create Offer</button></div>
+          <div class="ogrid" id="adv-offers-grid"></div>
+        </div>
+
+        <!-- CREATE OFFER -->
+        <div id="p-create-offer" class="page">
+          <div class="card" style="max-width:680px">
+            <div class="ch"><div class="ct2">➕ Create New Offer</div></div>
+            <div class="fc">
+              <div class="fr"><label>Offer Name</label><input id="of-nm" placeholder="e.g. $50 Amazon Gift Card"></div>
+              <div class="fr"><label>Category</label>
+                <select id="of-cat">
+                  <option>Gift Cards</option><option>Survey / CPL</option><option>Finance</option><option>App Install</option><option>Email Submit</option>
+                </select>
+              </div>
+            </div>
+            <div class="fr"><label>Description</label><textarea id="of-desc" placeholder="Describe the offer, conversion flow, and requirements..."></textarea></div>
+            <div class="fc">
+              <div class="fr"><label>Payout to Publisher (USD)</label><input id="of-pay" type="number" placeholder="2.50" step="0.01"></div>
+              <div class="fr"><label>GEO / Countries</label><input id="of-geo" placeholder="US, CA, UK"></div>
+            </div>
+            <div class="fc">
+              <div class="fr"><label>Daily Conversion Cap</label><input id="of-cap" type="number" placeholder="500"></div>
+              <div class="fr"><label>Allowed Traffic Types</label>
+                <select id="of-tr"><option>All Traffic</option><option>Social Only</option><option>No Incentive</option><option>Email Only</option></select>
+              </div>
+            </div>
+            <div class="fr"><label>Your Landing Page URL (with {clickid} placeholder)</label>
+              <input id="of-url" placeholder="https://yoursite.com/lp?clickid={clickid}&sub={sub1}">
+            </div>
+            <div class="fr"><label>Access Type</label>
+              <select id="of-access">
+                <option value="open">🔓 Open — All publishers can promote</option>
+                <option value="locked">🔒 Locked — Publishers must request access</option>
+              </select>
+            </div>
+            <div style="display:flex;gap:10px;margin-top:4px">
+              <button class="btn bp" style="padding:11px 24px" onclick="createOffer()">Submit for Review →</button>
+              <button class="btn bo" onclick="nav('my-offers',null)">Cancel</button>
+            </div>
+            <div style="margin-top:14px;padding:12px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);font-size:11px;color:var(--muted)">
+              ℹ️ All offers are reviewed by our team before going live. Usually approved within 4–12 hours.
+            </div>
+          </div>
+        </div>
+
+        <!-- CONVERSIONS -->
+        <div id="p-conversions" class="page">
+          <div class="sg4">
+            <div class="sc"><div class="scl">Total Conv.</div><div class="scv">31,440</div></div>
+            <div class="sc"><div class="scl">Approved</div><div class="scv" style="color:var(--grn)">29,610</div><div class="scc up">94.2%</div></div>
+            <div class="sc"><div class="scl">Rejected</div><div class="scv" style="color:var(--red)">284</div><div class="scc dn">0.9%</div></div>
+            <div class="sc"><div class="scl">Total Spend</div><div class="scv" style="color:var(--red)">$83,250</div></div>
+          </div>
+          <div class="card">
+            <div class="ch">
+              <div class="ct2">Conversion Log</div>
+              <div style="display:flex;gap:8px">
+                <select style="padding:6px 11px;background:var(--input);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none"><option>All Status</option><option>Approved</option><option>Pending</option><option>Rejected</option></select>
+                <button class="btn bo bsm" onclick="showToast('Exporting CSV...')">Export CSV</button>
+              </div>
+            </div>
+            <table class="tbl">
+              <thead><tr><th>Conv. ID</th><th>Publisher</th><th>Offer</th><th>Fraud Score</th><th>Cost</th><th>Date</th><th>Status</th></tr></thead>
+              <tbody id="conv-tbody"></tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- REPORTS -->
+        <div id="p-reports" class="page">
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">By Offer</div></div>
+              <table class="tbl">
+                <thead><tr><th>Offer</th><th>Conv.</th><th>Spend</th><th>CPA</th></tr></thead>
+                <tbody>
+                  <tr><td>$50 Amazon Gift Card</td><td>18,420</td><td style="color:var(--red)">$46,050</td><td>$2.50</td></tr>
+                  <tr><td>$100 Visa Gift Card</td><td>5,824</td><td style="color:var(--red)">$23,296</td><td>$4.00</td></tr>
+                  <tr><td>Email Submit CPL</td><td>8,240</td><td style="color:var(--red)">$9,888</td><td>$1.20</td></tr>
+                </tbody>
+              </table>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">By GEO</div></div>
+              <table class="tbl">
+                <thead><tr><th>Country</th><th>Conv.</th><th>Spend</th></tr></thead>
+                <tbody>
+                  <tr><td>🇺🇸 United States</td><td>22,480</td><td style="color:var(--red)">$56,200</td></tr>
+                  <tr><td>🇨🇦 Canada</td><td>5,420</td><td style="color:var(--red)">$13,550</td></tr>
+                  <tr><td>🇬🇧 United Kingdom</td><td>3,540</td><td style="color:var(--red)">$8,850</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct2">Daily (Last 7 Days)</div></div>
+            <table class="tbl">
+              <thead><tr><th>Date</th><th>Conv.</th><th>Spend</th><th>Fraud Blocked</th></tr></thead>
+              <tbody>
+                <tr><td>Today</td><td>284</td><td style="color:var(--red)">$796</td><td style="color:var(--grn)">127</td></tr>
+                <tr><td>Yesterday</td><td>248</td><td style="color:var(--red)">$694</td><td style="color:var(--grn)">108</td></tr>
+                <tr><td>Mar 9</td><td>312</td><td style="color:var(--red)">$874</td><td style="color:var(--grn)">94</td></tr>
+                <tr><td>Mar 8</td><td>194</td><td style="color:var(--red)">$543</td><td style="color:var(--grn)">71</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- BILLING -->
+        <div id="p-billing" class="page">
+          <div class="bal-card">
+            <div class="bal-label">Current Account Balance</div>
+            <div class="bal-amount">$5,180.00 <span style="font-size:14px;font-weight:400;color:var(--muted)">USD</span></div>
+            <div style="margin-top:12px;font-size:12px;color:var(--muted)">Daily cap: $1,000 · Monthly cap: $20,000</div>
+          </div>
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">Add Funds</div></div>
+              <div style="font-size:11px;color:var(--muted);margin-bottom:14px">Contact your account manager to add funds via bank wire or crypto. Minimum deposit: $500 USD.</div>
+              <div class="fr"><label>Amount (USD)</label><input type="number" placeholder="1000" id="dep-amt"></div>
+              <div class="fr"><label>Payment Method</label>
+                <select>
+                  <option>Bank Wire Transfer</option>
+                  <option>USDT (TRC20)</option>
+                  <option>BTC</option>
+                  <option>ETH</option>
+                </select>
+              </div>
+              <button class="btn bp" style="width:100%;padding:11px" onclick="showToast('Deposit request sent! Manager will contact you within 2h')">Request Deposit →</button>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Budget Controls</div></div>
+              <div style="display:flex;flex-direction:column;gap:10px">
+                <div class="fr" style="margin-bottom:0"><label>Daily Conversion Cap (USD)</label><input type="number" value="1000"></div>
+                <div class="fr" style="margin-bottom:0"><label>Monthly Cap (USD)</label><input type="number" value="20000"></div>
+                <div style="display:flex;align-items:center;justify-content:space-between;font-size:12px;padding:10px;background:var(--surf2);border-radius:7px">
+                  <span style="color:var(--muted)">Low balance alert (under $500)</span>
+                  <input type="checkbox" checked>
+                </div>
+                <button class="btn bp" onclick="showToast('Budget settings saved ✅')">Save Budget Settings</button>
+              </div>
+            </div>
+          </div>
+          <div class="card">
+            <div class="ch"><div class="ct2">Recent Transactions</div></div>
+            <table class="tbl">
+              <thead><tr><th>Date</th><th>Type</th><th>Amount</th><th>Balance After</th></tr></thead>
+              <tbody>
+                <tr><td style="color:var(--muted)">Today</td><td>Conversion Spend</td><td style="color:var(--red)">−$796.00</td><td>$5,180.00</td></tr>
+                <tr><td style="color:var(--muted)">Mar 10</td><td>Conversion Spend</td><td style="color:var(--red)">−$694.40</td><td>$5,976.00</td></tr>
+                <tr><td style="color:var(--muted)">Mar 8</td><td>Deposit</td><td style="color:var(--grn)">+$5,000.00</td><td>$6,670.40</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- INVOICES -->
+        <div id="p-invoices" class="page">
+          <div class="card">
+            <div class="ch"><div class="ct2">Monthly Invoices</div></div>
+            <table class="tbl">
+              <thead><tr><th>Period</th><th>Conversions</th><th>Amount</th><th>Status</th><th></th></tr></thead>
+              <tbody>
+                <tr><td>March 2026 (so far)</td><td>1,842</td><td style="color:var(--red);font-weight:700">$5,155.60</td><td><span class="pill py">In Progress</span></td><td><button class="btn bo bsm" onclick="showToast('Downloading...')">Download</button></td></tr>
+                <tr><td>February 2026</td><td>14,820</td><td style="color:var(--red);font-weight:700">$41,496.00</td><td><span class="pill pg">Paid ✓</span></td><td><button class="btn bo bsm" onclick="showToast('Downloading...')">Download</button></td></tr>
+                <tr><td>January 2026</td><td>12,418</td><td style="color:var(--red);font-weight:700">$34,770.40</td><td><span class="pill pg">Paid ✓</span></td><td><button class="btn bo bsm" onclick="showToast('Downloading...')">Download</button></td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- POSTBACK SETUP -->
+        <div id="p-postback" class="page">
+          <div class="card" style="max-width:700px">
+            <div class="ch"><div class="ct2">🔗 Postback / S2S Integration</div></div>
+            <div style="font-size:13px;color:var(--muted);margin-bottom:18px;line-height:1.7">When a publisher drives a conversion, our system fires a GET request to your postback URL with the click ID and payout. Your server must respond with HTTP 200.</div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px">Your Postback URL (send to our team)</div>
+            <div class="pb-box"><span class="pb-code">https://yourserver.com/conversion?click_id={clickid}&payout={payout}&status=approved</span><button class="copy-btn" onclick="copyText(this,'https://yourserver.com/conversion?click_id={clickid}&payout={payout}&status=approved')">Copy</button></div>
+            <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px;margin-top:16px">Our Conversion Postback (fires to you)</div>
+            <div class="pb-box"><span class="pb-code" id="pb-url">https://track.nexuscpa.com/postback?click_id=XXXX&payout=2.50&token=nexus_secret_2026</span><button class="copy-btn" onclick="copyText(this,document.getElementById('pb-url').textContent)">Copy</button></div>
+            <div style="margin-top:16px">
+              <div style="font-size:11px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:.9px;margin-bottom:9px">Test Postback</div>
+              <div style="display:flex;gap:9px">
+                <input id="test-click" placeholder="Enter a test click_id" style="flex:1;padding:9px 13px;background:var(--input);border:1px solid var(--border);border-radius:7px;color:var(--text);font-family:'Sora',sans-serif;font-size:11px;outline:none">
+                <button class="btn bp" onclick="testPostback()">Test Fire →</button>
+              </div>
+            </div>
+            <div style="margin-top:18px;padding:14px;background:var(--surf2);border-radius:8px;border:1px solid var(--border);font-size:11px;color:var(--muted);line-height:1.8">
+              <strong style="color:var(--text)">Parameters:</strong><br>
+              <code style="font-family:'JetBrains Mono',monospace">{clickid}</code> — Unique click ID from NexusCPA<br>
+              <code style="font-family:'JetBrains Mono',monospace">{payout}</code> — Conversion payout in USD<br>
+              <code style="font-family:'JetBrains Mono',monospace">{aff_id}</code> — Publisher ID<br>
+              <code style="font-family:'JetBrains Mono',monospace">{sub1}</code> — Publisher's sub ID / campaign
+            </div>
+          </div>
+        </div>
+
+        <!-- FRAUD RULES -->
+        <div id="p-fraud-settings" class="page">
+          <div class="card" style="max-width:600px">
+            <div class="ch"><div class="ct2">🛡️ Fraud Rules for Your Offers</div></div>
+            <div style="display:flex;flex-direction:column;gap:13px;font-size:12px">
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surf2);border-radius:8px"><span>Block VPN / Proxy traffic</span><input type="checkbox" checked></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surf2);border-radius:8px"><span>Block Tor exit nodes</span><input type="checkbox" checked></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surf2);border-radius:8px"><span>Block datacenter IPs</span><input type="checkbox" checked></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surf2);border-radius:8px"><span>Duplicate conversion window</span><select style="padding:5px 9px;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:11px;outline:none"><option>30 minutes</option><option>1 hour</option><option>24 hours</option></select></div>
+              <div style="display:flex;justify-content:space-between;align-items:center;padding:12px;background:var(--surf2);border-radius:8px"><span>Auto-reject if fraud score ≥</span><input type="number" value="75" style="width:60px;padding:5px 9px;background:var(--input);border:1px solid var(--border);border-radius:5px;color:var(--text);font-size:11px;outline:none;text-align:center"></div>
+              <button class="btn bp" style="padding:11px;width:100%" onclick="showToast('Fraud rules saved ✅')">Save Rules</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- ACCOUNT -->
+        <div id="p-account" class="page">
+          <div class="g2">
+            <div class="card">
+              <div class="ch"><div class="ct2">Company Profile</div></div>
+              <div class="fr"><label>Company Name</label><input value="GiftPro LLC"></div>
+              <div class="fr"><label>Business Email</label><input type="email" value="billing@giftpro.com"></div>
+              <div class="fr"><label>Skype / Telegram</label><input value="@giftproteam"></div>
+              <div class="fr"><label>Billing Address</label><textarea style="height:70px">123 Business Ave, New York, NY 10001, USA</textarea></div>
+              <button class="btn bp" onclick="showToast('Profile saved ✅')">Save Changes</button>
+            </div>
+            <div class="card">
+              <div class="ch"><div class="ct2">Security</div></div>
+              <div class="fr"><label>Current Password</label><input type="password" placeholder="••••••••"></div>
+              <div class="fr"><label>New Password</label><input type="password" placeholder="Min. 8 characters"></div>
+              <div class="fr"><label>Confirm New Password</label><input type="password" placeholder="Repeat"></div>
+              <button class="btn bp" onclick="showToast('Password updated ✅')">Update Password</button>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- CHAT FAB -->
+  <div class="cfab">
+    <div class="cpanel" id="cpanel">
+      <div class="chead">
+        <div class="chi">
+          <div class="chav">S</div>
+          <div><div class="chnm">Sarah — Advertiser Manager</div><div class="chst">● Online</div></div>
+        </div>
+        <button class="cclose" onclick="toggleChat()">✕</button>
+      </div>
+      <div class="cmsgs" id="cmsgs">
+        <div class="msg"><div class="bub">Hi GiftPro! 👋 I'm Sarah, your dedicated advertiser manager. How can I help?</div><div class="mtime">Sarah · 9:00 AM</div></div>
+      </div>
+      <div class="cinrow">
+        <input class="cinp" id="cinp" placeholder="Message your manager..." onkeydown="if(event.key==='Enter')sendMsg()">
+        <button class="csend" onclick="sendMsg()">↑</button>
+      </div>
+    </div>
+    <button class="cbub" onclick="toggleChat()">💬<span class="cunread" id="cunread">1</span></button>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+// Theme
+function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('ticon').textContent=d?'☀️':'🌙'}
+
+// Auth
+function toAuth(s){['register','pending','login'].forEach(x=>document.getElementById('auth-'+x).style.display='none');document.getElementById('auth-'+s).style.display='flex'}
+function doRegister(){const em=document.getElementById('r-em').value,pw=document.getElementById('r-pw').value,bud=document.getElementById('r-bud').value,tp=document.getElementById('r-type').value;if(!em||!pw||!bud||!tp){showToast('Please fill all required fields');return}toAuth('pending')}
+function doLogin(){document.getElementById('auth-login').style.display='none';document.getElementById('main').style.display='block'}
+
+// Nav
+const titles={dashboard:'Dashboard','my-offers':'My Offers','create-offer':'Create Offer',conversions:'Conversions',reports:'Reports',billing:'Billing & Deposit',invoices:'Invoices',postback:'Postback Setup','fraud-settings':'Fraud Rules',account:'Account Settings'}
+function nav(p,el){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById('p-'+p).classList.add('active');document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');document.getElementById('ptitle').textContent=titles[p]||p}
+
+// Toast
+function showToast(m){const t=document.getElementById('toast');t.textContent=m;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),3200)}
+
+// Copy
+function copyText(btn,txt){navigator.clipboard.writeText(txt).catch(()=>{});const o=btn.textContent;btn.textContent='✓ Copied';btn.style.cssText='background:var(--grn);color:#fff;border-color:var(--grn)';setTimeout(()=>{btn.textContent=o;btn.style.cssText=''},2000)}
+
+// Chat
+function toggleChat(){const p=document.getElementById('cpanel');p.classList.toggle('open');document.getElementById('cunread').style.display='none'}
+function sendMsg(){const i=document.getElementById('cinp'),m=i.value.trim();if(!m)return;const ms=document.getElementById('cmsgs');ms.innerHTML+=`<div class="msg msg-out"><div class="bub">${m}</div><div class="mtime">You · just now</div></div>`;i.value='';ms.scrollTop=ms.scrollHeight;setTimeout(()=>{ms.innerHTML+=`<div class="msg"><div class="bub">Thanks for reaching out! I'll get back to you shortly 👍</div><div class="mtime">Sarah · just now</div></div>`;ms.scrollTop=ms.scrollHeight},1200)}
+
+// Offers
+const advOffers=[
+  {id:1,nm:'$50 Amazon Gift Card',cat:'Gift Cards',pay:'$2.50',geo:'US, CA, UK',access:'open',status:'active',conv:18420,spend:'$46,050'},
+  {id:2,nm:'$100 Visa Gift Card',cat:'Gift Cards',pay:'$4.00',geo:'US Only',access:'open',status:'active',conv:5824,spend:'$23,296'},
+  {id:3,nm:'Email Submit CPL',cat:'Survey/CPL',pay:'$1.20',geo:'US, CA, AU',access:'open',status:'active',conv:8240,spend:'$9,888'},
+  {id:4,nm:'Consumer Survey',cat:'Survey/CPL',pay:'$1.80',geo:'US, CA',access:'locked',status:'paused',conv:0,spend:'$0'},
+];
+document.getElementById('adv-offers-grid').innerHTML=advOffers.map(o=>`
+<div class="oc">
+  <div class="ocat">${o.cat}</div>
+  <div class="onm">${o.nm}</div>
+  <div class="opay">${o.pay} <span style="font-size:10px;color:var(--muted);font-weight:400">payout</span></div>
+  <div class="ometa"><span>${o.geo}</span><span>${o.conv.toLocaleString()} conv.</span></div>
+  <div class="oact">
+    <span class="pill ${o.status==='active'?'pg':'py'}">${o.status==='active'?'Active':'Paused'}</span>
+    <span class="pill ${o.access==='open'?'pb':'py'}">${o.access==='open'?'🔓 Open':'🔒 Locked'}</span>
+    <button class="btn bo bsm" onclick="showToast('Editing offer...')">Edit</button>
+    <button class="btn ${o.status==='active'?'by':'bg2'} bsm" onclick="showToast('${o.status==='active'?'Offer paused':'Offer resumed'}')">${o.status==='active'?'Pause':'Resume'}</button>
+  </div>
+</div>`).join('');
+
+// Create offer
+function createOffer(){const nm=document.getElementById('of-nm').value;if(!nm){showToast('Please enter offer name');return}showToast('Offer submitted for review! Approved within 12h ✅');nav('my-offers',null)}
+
+// Conversions
+document.getElementById('conv-tbody').innerHTML=[
+  {id:'CV-8821',pub:'AFF-00123',offer:'$50 Gift Card',fs:8,cost:'$2.50',date:'13:42',st:'approved'},
+  {id:'CV-8820',pub:'AFF-00189',offer:'$50 Gift Card',fs:42,cost:'$2.50',date:'13:28',st:'pending'},
+  {id:'CV-8819',pub:'AFF-00201',offer:'Email Submit',fs:12,cost:'$1.20',date:'13:11',st:'approved'},
+  {id:'CV-8818',pub:'AFF-00215',offer:'$50 Gift Card',fs:88,cost:'$2.50',date:'12:58',st:'rejected'},
+  {id:'CV-8817',pub:'AFF-00123',offer:'Email Submit',fs:6,cost:'$1.20',date:'12:30',st:'approved'},
+].map(r=>`<tr><td style="font-family:monospace;font-size:10px;color:var(--muted)">${r.id}</td><td>${r.pub}</td><td>${r.offer}</td><td><span class="pill ${r.fs<30?'pg':r.fs<70?'py':'pr'}">${r.fs<30?'Clean':'r.fs<70?Medium':'High'} (${r.fs})</span></td><td style="color:var(--red);font-weight:700">${r.cost}</td><td style="color:var(--muted)">${r.date}</td><td><span class="pill ${r.st==='approved'?'pg':r.st==='pending'?'py':'pr'}">${r.st==='approved'?'Approved':r.st==='pending'?'Pending':'Rejected'}</span></td></tr>`).join('');
+
+function testPostback(){const c=document.getElementById('test-click').value;if(!c){showToast('Enter a click ID');return}showToast('Test postback fired! Check your server logs.')}
+</script>
+</body>
+</html>
