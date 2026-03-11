@@ -162,13 +162,14 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
 <body>
 
 <!-- ADMIN LOGIN -->
-<div id="al" class="alogin">
+<div id="adminlogin" class="alogin">
   <div class="agrid"></div>
   <div class="albox">
     <div class="allogo">Nexus<span>CPA</span></div>
     <div class="altag">Admin Control Panel · Authorized Access Only</div>
-    <div class="fr"><label>Admin Email</label><input type="email" value="admin@nexuscpa.com"></div>
-    <div class="fr"><label>Password</label><input type="password" value="admin1234"></div>
+    <div class="fr"><label>Admin Email</label><input type="email" id="a-email" value="admin@nexuscpa.com"></div>
+    <div class="fr"><label>Password</label><input type="password" id="a-pass" value="admin1234"></div>
+    <div id="login-err" style="color:#ef4444;font-size:12px;margin-bottom:8px;display:none">❌ Wrong email or password</div>
     <button class="albtn" onclick="doLogin()">Access Admin Panel →</button>
   </div>
 </div>
@@ -308,7 +309,7 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
             <tbody>
               <tr>
                 <td><strong>TechOffers Inc.</strong></td>
-                <td>contact@techoffers.com</td>
+                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="8ae9e5e4feebe9fecafeefe9e2e5ececeff8f9a4e9e5e7">[email&#160;protected]</a></td>
                 <td>$5,000</td>
                 <td style="color:var(--muted)">Today</td>
                 <td>
@@ -318,7 +319,7 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
               </tr>
               <tr>
                 <td><strong>LeadGen Pro</strong></td>
-                <td>team@leadgenpro.io</td>
+                <td><a href="/cdn-cgi/l/email-protection" class="__cf_email__" data-cfemail="e69283878ba68a838782818388969489c88f89">[email&#160;protected]</a></td>
                 <td>$2,500</td>
                 <td style="color:var(--muted)">Yesterday</td>
                 <td>
@@ -654,14 +655,23 @@ nav{padding:10px 8px;flex:1;overflow-y:auto}
 </div>
 <div class="toast" id="toast"></div>
 
-<script>
+<script data-cfasync="false" src="/cdn-cgi/scripts/5c5dd728/cloudflare-static/email-decode.min.js"></script><script>
 // --- THEME ---
 function toggleTheme(){const h=document.documentElement,d=h.getAttribute('data-theme')==='dark';h.setAttribute('data-theme',d?'light':'dark');document.getElementById('ticon').textContent=d?'☀️':'🌙'}
 
-// --- LOGIN ---
-function doLogin(){document.getElementById('al').style.display='none';document.getElementById('main').style.display='block'}
+function doLogin(){
+  const em=document.getElementById('a-email').value;
+  const pw=document.getElementById('a-pass').value;
+  const err=document.getElementById('login-err');
+  if(em==='admin@nexuscpa.com' && pw==='admin1234'){
+    document.getElementById('adminlogin').style.display='none';
+    document.getElementById('main').style.display='block';
+  } else {
+    err.style.display='block';
+    setTimeout(()=>err.style.display='none',3000);
+  }
+}
 
-// --- NAV ---
 const titles={dashboard:'Dashboard',publishers:'Publisher Management',advertisers:'Advertiser Management',offers:'Offer Management','add-offer':'Add New Offer','offer-requests':'Offer Access Requests',payouts:'Payout Requests',transactions:'Transactions','advertiser-billing':'Advertiser Billing',chat:'Live Chat',announcements:'Announcements',fraud:'Fraud Monitor',reports:'Reports',settings:'Settings'}
 function nav(p,el){document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));const pg=document.getElementById('p-'+p);if(pg)pg.classList.add('active');document.querySelectorAll('.ni').forEach(x=>x.classList.remove('active'));if(el)el.classList.add('active');document.getElementById('ptitle').textContent=titles[p]||p}
 
@@ -829,8 +839,4 @@ const fraudItems=[
   {ip:'45.147.228.80',reason:'Click Rate Exceeded',score:76,offer:'Survey CPL',time:'13:21'},
   {ip:'194.165.16.11',reason:'Datacenter IP + Proxy',score:82,offer:'$100 Visa',time:'13:05'},
 ];
-document.getElementById('fraud-list').innerHTML=fraudItems.map(f=>`<div class="fitem"><div class="fav">🛡️</div><div style="flex:1"><div style="font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace">${f.ip}</div><div style="font-size:11px;color:var(--muted)">${f.reason} · ${f.offer}</div></div><div style="text-align:right"><div class="fscore">${f.score}</div><div style="font-size:10px;color:var(--muted)">${f.time}</div></div></div>`).join('');
-function blockIP(){const ip=document.getElementById('block-ip').value;if(!ip){showToast('Enter an IP address');return}showToast('IP '+ip+' blocked ✅');document.getElementById('block-ip').value=''}
-</script>
-</body>
-</html>
+document.getElementById('fraud-list').innerHTML=fraudItems.map(f=>`<div class="fitem"><div class="fav">🛡️</div><div style="flex:1"><div style="font-size:12px;font-weight:600;font-family:'JetBrains Mono',monospace">${f.ip}</div><div style="font-size:11px;color:var(--muted)">${f.reason} · ${f.offer}</div></div><div style="text-align:r
